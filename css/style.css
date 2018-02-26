@@ -1,0 +1,9 @@
+.custom-card-image {
+    display: flex;
+    justify-content: center;
+    overflow:hidden;
+    width:100%;
+}
+.custom-card-image img{
+    height: 100%;
+}
