@@ -226,7 +226,7 @@ class CatalogComponent extends React.Component  {
                         <label htmlFor="categorySelect">
                             <h4>Categorías</h4>
                             <select id="categorySelect" onChange={this.setCategory.bind(this)} className="form-control">
-                                <option value={/.*/i}>Mostrar Todo</option>
+                                <option value={''}>Mostrar Todo</option>
                                 {
                                     types.map(
                                         (type)=><option key={type} value={type}>{type}</option>
