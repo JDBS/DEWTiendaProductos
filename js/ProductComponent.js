@@ -3,7 +3,7 @@ class ProductComponent extends React.Component {
         //Card Columns
         //https://getbootstrap.com/docs/4.0/components/card/#card-columns
         return (
-            <div className="card" styles={'width:25px;'}>
+            <div className="card" style={'width:250px;'}>
                 <img className="card-img-top" src={this.props.data.image} alt="Card image cap"/>
                 <div className="card-body">
                     <h5 className="card-title">{this.props.data.name}</h5>

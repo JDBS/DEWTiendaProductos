@@ -3,9 +3,7 @@ class CatalogComponent extends React.Component  {
     constructor(props) {
         super(props);
         this.state={
-            allProducts:[
-              
-            ],
+            allProducts:load('productList'),
             searchRegExp:/.*/i,
             minPrice:0,
             maxPrice:Number.MAX_VALUE,
@@ -180,7 +178,7 @@ class CatalogComponent extends React.Component  {
                         </div>
                     </div>
                     <div className="col-sm-9 col-md-10">
-                        <div className="catalog card-columns ">
+                        <div className="catalog card-columns">
                             {
                                 products.map(
                                     (product)=><ProductComponent key={`${product.platform}${product.productType.id}${product.name}`} data={product}/>
