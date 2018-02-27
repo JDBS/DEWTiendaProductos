@@ -4,29 +4,21 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"></script>
+    <link rel="stylesheet" href="css/style.css"></script>
     <script src="js/jquery-3.2.1.min.js"/></script>
-    <script src="js/react.development.js"></script>
-    <script src="js/react-dom.development.js"></script>
-    <script src="https://fb.me/JSXTransformer-0.13.3.js"></script>
+    <script crossorigin src="js/react.development.js"></script>
+    <script crossorigin src="js/react-dom.development.js"></script>
+    <script crossorigin src="js/JSXTransformer.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+    <script src="js/ProductComponent.js" type="text/jsx"></script>
+    <script src="js/CatalogComponent.js" type="text/jsx"></script>
+    <script src="js/test.js" type="text/jsx"></script>
 </head>
 <body>
         
-    <div id="react">
+    <div class="container" id="react">
     </div>
-
-    <script type="text/jsx">
-    class Test extends React.Component{
-         render(){
-             return (
-                 <div>hola</div>
-             )
-         }
-    }
-    $(()=>{
-            ReactDOM.render(<Test/>,document.getElementById('react'));
-    });
-    </script>
-    <script src="js/apiScript.js"></script>
-    <script src="js/product.js"></script>
 </body>
 </html>
