@@ -47,6 +47,6 @@ function getProducts(data, api) {
     count++;
     if (count === 2){
         // localStorage.setItem('productList', JSON.stringify(productList));
-        converCurrency(productList);
+        convertCurrency(productList);
     }
 }

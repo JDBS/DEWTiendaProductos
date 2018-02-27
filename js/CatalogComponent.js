@@ -4,69 +4,7 @@ class CatalogComponent extends React.Component  {
         super(props);
         this.state={
             allProducts:[
-                {
-                    id:'2324',
-                    platform:'ebay',
-                    name:'Muñeco Hinchable (TV)',
-                    image:'./assets/images/test2.png',
-                    description:'¡Muñecos Hinchables que bailan y saludan como idiotas!',
-                    productType:'TV',
-                    price:50
-                },
-                {
-                    id:'2323',
-                    platform:'ebay',
-                    name:'Muñeco Hinchable (M. TV)',
-                    image:'./assets/images/test2.png',
-                    description:'¡Muñecos Hinchables que bailan y saludan como idiotas!',
-                    productType:'Mando TV',
-                    price:50
-                },
-                {
-                    id:'2327',
-                    platform:'ebay',
-                    name:'Muñeco Hinchable (TV)',
-                    image:'./assets/images/test2.png',
-                    description:'¡Muñecos Hinchables que bailan y saludan como idiotas!',
-                    productType:'TV',
-                    price:50
-                },
-                {
-                    id:'2364',
-                    platform:'ebay',
-                    name:'Muñeco Hinchable (TV)',
-                    image:'./assets/images/test2.png',
-                    description:'¡Muñecos Hinchables que bailan y saludan como idiotas!',
-                    productType:'TV',
-                    price:50
-                },
-                {
-                    id:'2424',
-                    platform:'ebay',
-                    name:'Muñeco Hinchable (M)',
-                    image:'./assets/images/test2.png',
-                    description:'¡Muñecos Hinchables que bailan y saludan como idiotas!',
-                    productType:'Muñeco',
-                    price:50
-                },
-                {
-                    id:'1324',
-                    platform:'ebay',
-                    name:'Muñeco Hinchable (M)',
-                    image:'./assets/images/test2.png',
-                    description:'¡Muñecos Hinchables que bailan y saludan como idiotas!',
-                    productType:'Muñeco',
-                    price:50
-                },
-                {
-                    id:'2758',
-                    platform:'ebay',
-                    name:'Muñeco Hinchable (M)',
-                    image:'./assets/images/test2.png',
-                    description:'¡Muñecos Hinchables que bailan y saludan como idiotas!',
-                    productType:'Muñeco',
-                    price:50
-                }
+              
             ],
             searchRegExp:/.*/i,
             minPrice:0,
@@ -81,8 +19,8 @@ class CatalogComponent extends React.Component  {
         const types=[];
         allProducts.forEach(
             (product)=>{
-                if(!types.includes(product.productType)){
-                    types.push(product.productType);
+                if(!types.includes(product.productType.typeName)){
+                    types.push(product.productType.typeName);
                 }
             }
         );
@@ -127,7 +65,7 @@ class CatalogComponent extends React.Component  {
         const regExp= this.state.productType;
 
         const filteredProductList=productList.filter(
-            (product)=>regExp.test(product.productType)
+            (product)=>regExp.test(product.productType.typeName)
         );
 
         return filteredProductList;
@@ -245,7 +183,7 @@ class CatalogComponent extends React.Component  {
                         <div className="catalog card-columns ">
                             {
                                 products.map(
-                                    (product)=><ProductComponent key={`${product.platform}${product.id}`} data={product}/>
+                                    (product)=><ProductComponent key={`${product.platform}${product.productType.id}${product.name}`} data={product}/>
                                 )
                             }
                         </div>
