@@ -46,7 +46,7 @@ var filterarray = [
     }
 ];
 
-//#region - Ebay
+
 // Define global variable for the URL filter
 var urlfilter = "";
 
@@ -75,39 +75,19 @@ function buildURLArray() {
 
 // Execute the function to build the URL filter
 buildURLArray(filterarray);
-
+//#region - Api Url
 // Construct the request Replace MyAppID with your Production AppID
 var url = "http://svcs.ebay.com/services/search/FindingService/v1";
-url += "?OPERATION-NAME=findItemsByKeywords";
+url += "?SECURITY-APPNAME=" + apikeyEbay;
+url += "&OPERATION-NAME=findItemsByKeywords";
 url += "&SERVICE-VERSION=1.0.0";
-url += "&SECURITY-APPNAME=" + apikeyEbay;
-url += "&GLOBAL-ID=EBAY-ES";
 url += "&RESPONSE-DATA-FORMAT=JSON";
-url += "&callback=getProducts";
-// url += "&callback=_cb_findItemsByKeywords";
 url += "&REST-PAYLOAD";
 url += "&keywords=" + searchEbay;
 url += "&paginationInput.entriesPerPage=" + pageSize;
+url += "&GLOBAL-ID=EBAY-ES";
 url += urlfilter;
 url += `&sortOrder=${sortOrderType[0]}`;
-
-// Submit the request
-var s = document.createElement('script'); // create script element
-s.src = url;
-document.body.appendChild(s);
-// #endregion
-// region - BestBuy
-
-// var bestBuy = {
-//     'baseURL': 'https://api.bestbuy.com/v1/products',
-//     'categoryId': '(categoryPath.id=abcat0101000)',
-//     'attribute': '(manufacturer=samsung)',
-//     'keyword': '(search=4k)',
-//     'apiKey': '?apiKey=A0iJvovzx1h8jN9IXhGSCwjm',
-//     'sortOptions': '&sort=salePrice.asc',
-//     'showOptions': '&show=image,salePrice,modelNumber,longDescription,shortDescription,name,categoryPath.name,categoryPath.id',
-//     'responseFormat': '&format=json'
-// };
 
 var urlBB = "https://api.bestbuy.com/v1/products(" +
     "(search=" + searchBesBuy + ")" +
@@ -116,39 +96,73 @@ var urlBB = "https://api.bestbuy.com/v1/products(" +
     // "&(categoryPath.id=abcat0101000))" +
     "?apiKey=" + apikeyBestBuy +
     "&sort=salePrice.asc" +
-    "&show=image,salePrice,modelNumber,longDescription,shortDescription,name,categoryPath.name,categoryPath.id" +
+    "&show=image,salePrice,modelNumber,longDescription,thumbnailImage,shortDescription,name,modelNumber,categoryPath.name,categoryPath.id" +
     "&format=json";
-
-$.ajax({
-    url: urlBB,
-    type: 'GET',
-    dataType: 'json',
-    timeout: 3000,
-    beforeSend: function () {
-        // $('#loader').show();
-    },
-    success: function (data) {
-        getProducts(data, 'BestBuy');
-    },
-    error: function (jqXHR, status, error) { //función error
-        console.error('Can\'t do because: ' + jqXHR.responseJSON.code + ' , ' + jqXHR.responseJSON.message);
-    },
-    complete: function (jqXHR, status) {
-        if (jqXHR.status === 409) {
-            // $('#loader').hide();
-            // $divCharacters.children().remove();
-            // $divCharacters.append($('<span>There has been a problem with the server. Please try again later.</span>'));
-            // $divComics.children().remove();
-            // $divComics.append($('<span>There has been a problem with the server. Please try again later.</span>'));
-        }
-        else {
-            console.log('Done');
-        }
-    }
-});
+ajaxRequest('Ebay', url);
+ajaxRequest('BestBuy', urlBB);
 //#endregion
-//#region - Forex
-function converCurrency(list) {
+//#region - Api request
+function ajaxRequest(platform, url) {
+    if (platform === 'Ebay')
+        $.ajax({
+            url: url,
+            jsonp: 'callback',
+            dataType: 'jsonp',
+            beforeSend: function () {
+                // $('#loader').show();
+            },
+            success: function (response) {
+                console.log(response);
+                getProducts(response, 'Ebay');
+            },
+            error: function (jqXHR, status, error) { //función error
+                console.error('Can\'t do because: ' + jqXHR, status, error);
+            },
+            complete: function (jqXHR, status) {
+                if (jqXHR.status === 409) {
+                    // $('#loader').hide();
+                    // $divCharacters.children().remove();
+                    // $divCharacters.append($('<span>There has been a problem with the server. Please try again later.</span>'));
+                    // $divComics.children().remove();
+                    // $divComics.append($('<span>There has been a problem with the server. Please try again later.</span>'));
+                }
+                else {
+                    console.log('Done');
+                }
+            }
+        });
+    if (platform === 'BestBuy')
+        $.ajax({
+            url: urlBB,
+            type: 'GET',
+            dataType: 'json',
+            timeout: 3000,
+            beforeSend: function () {
+                // $('#loader').show();
+            },
+            success: function (data) {
+                getProducts(data, 'BestBuy');
+            },
+            error: function (jqXHR, status, error) { //función error
+                console.error('Can\'t do because: ' + jqXHR.responseJSON.code + ' , ' + jqXHR.responseJSON.message);
+            },
+            complete: function (jqXHR, status) {
+                if (jqXHR.status === 409) {
+                    // $('#loader').hide();
+                    // $divCharacters.children().remove();
+                    // $divCharacters.append($('<span>There has been a problem with the server. Please try again later.</span>'));
+                    // $divComics.children().remove();
+                    // $divComics.append($('<span>There has been a problem with the server. Please try again later.</span>'));
+                }
+                else {
+                    console.log('Done');
+                }
+            }
+        });
+
+}
+
+function convertCurrency(list) {
     let times = 0;
     // var forexUrl = `https://forex.1forge.com/1.0.3/convert?from=USD&to=EUR&quantity=${value}&api_key=${apiKeyForex}`;
     list.forEach(e => {
@@ -179,7 +193,7 @@ function converCurrency(list) {
                     else {
                         times++;
                         if (times === (list.length / 2))
-                            localStorage.setItem('productList2', JSON.stringify(list));
+                            localStorage.setItem('productList', JSON.stringify(list));
                         // return price;
 
                     }
@@ -188,46 +202,4 @@ function converCurrency(list) {
     });
 
 }
-
 //#endregion
-// function _cb_findItemsByKeywords(root, api) {
-//     var html = [];
-//     var items = [];
-//     if (api === 'bb') {
-//         items = root.products;
-//         html.push('<table width="100%" border="0" cellspacing="0" cellpadding="3"><tbody>');
-//         html.push(`<tr><th>BestBuy</th></tr>`);
-//         for (let i = 0; i < items.length; ++i) {
-//             let item = items[i];
-//             let title = item.name;
-//             let manufacture = item.manufacturer;
-//             let pic = item.image;
-//             let salePrice = item.salePrice;
-//             let shortDescription = item.shortDescription;
-//             let viewitem = item.url;
-//             if (null != title && null != viewitem) {
-//                 html.push(`<tr>
-//                 <td><img src="${pic}" width="140px" border="0"></td>
-//                 <td>Precio: "${salePrice}</td>
-//                 <td><a href="${viewitem}" target="_blank">${title}</a></td>
-//                 </tr>`);
-//             }
-//         }
-//     } else {
-//         items = root.findItemsByKeywordsResponse[0].searchResult[0].item || [];
-//         html.push('<table width="100%" border="0" cellspacing="0" cellpadding="3"><tbody>');
-//         html.push(`<tr><th>Ebay</th></tr>`);
-//         for (let i = 0; i < items.length; ++i) {
-//             let item = items[i];
-//             let title = item.title;
-//             let pic = item.galleryURL;
-//             let viewitem = item.viewItemURL;
-//             if (null != title && null != viewitem) {
-//                 html.push('<tr><td><img src="' + pic + '" border="0"></td><td><a href="' + viewitem + '" target="_blank">' + title + '</a></td></tr>');
-//             }
-//         }
-//     }
-//     html.push('</tbody></table>');
-//     document.getElementById("results").innerHTML += html.join("");
-//
-// } //End _cb_findItemsByKeyWords() function
