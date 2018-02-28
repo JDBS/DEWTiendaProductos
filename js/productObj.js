@@ -14,6 +14,7 @@ let productList = [];
 
 function getProducts(data, api) {
     let product, items, name, manufacture, img, price, description, typeId, typeName;
+
     if (api === 'BestBuy') {
         items = data.products;
         for (let i = 0; i < items.length; ++i) {
@@ -36,14 +37,19 @@ function getProducts(data, api) {
             img = items[i].galleryPlusPictureURL[0];
             price = items[i].sellingStatus[0].currentPrice[0].__value__;
             description = items[i].title[0];
-            typeId = items[i].primaryCategory[0].categoryName[0];
-            typeName = items[i].primaryCategory[0].categoryId[0];
+            typeId = items[i].primaryCategory[0].categoryId[0];
+            typeName = items[i].primaryCategory[0].categoryName[0];
             if (null != name) {
                 product = new Product(name, description, price, typeId, typeName, img, 'Ebay');
             }
             productList.push(product);
         }
     }
+
+    for(let i = 0; i < productList.length; ++i){
+        productList[i].id=idAsigner.getId();
+    }
+
     count++;
     if (count === 2){
         // localStorage.setItem('productList', JSON.stringify(productList));

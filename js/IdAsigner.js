@@ -6,6 +6,7 @@ class IdAsigner{
 
   getId(){
     this.lastId++;
+    console.log(this.lastId);
     return this.lastId;
   }
 }

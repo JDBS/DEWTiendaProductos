@@ -178,12 +178,14 @@ class CatalogComponent extends React.Component  {
                         </div>
                     </div>
                     <div className="col-sm-9 col-md-10">
-                        <div className="catalog card-columns">
+                        <div className="catalog">
+                            <div className="row">
                             {
                                 products.map(
-                                    (product)=><ProductComponent key={`${product.platform}${product.productType.id}${product.name}`} data={product}/>
+                                    (product)=><ProductComponent key={`${product.id}${product.name}`} data={product}/>
                                 )
                             }
+                            </div>
                         </div>
                     </div>
                 </div>
