@@ -13,14 +13,32 @@ let count = 0;
 let productList = [];
 let productCategory = [{
     'Ebay': {
-        'tv': '',
-        'Health': '',
-        'phone': '',
+        'tv': {
+            'name': 'TV',
+            'id': '11071',
+        },
+        'Health': {
+            'name': 'Health',
+            'id': '',
+        },
+        'phone': {
+            'name': 'Smartphones',
+            'id': '',
+        },
     },
     'BestBuy': {
-        'tv': 'abcat0101000',
-        'Health': 'pcmcat242800050021',
-        'phone': 'pcmcat209400050001',
+        'tv': {
+            'name': 'TV',
+            'id': 'abcat0101000',
+        },
+        'Health': {
+            'name': 'Health',
+            'id': 'pcmcat242800050021',
+        },
+        'phone': {
+            'name': 'Smartphones',
+            'id': 'abcat0800000',
+        },
     }
 }];
 

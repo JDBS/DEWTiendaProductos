@@ -5,10 +5,11 @@ var apikeyEbay = 'Aymediac-TiendaDE-PRD-3134e8f72-be150970';
 var apikeyBestBuy = 'A0iJvovzx1h8jN9IXhGSCwjm';
 var apiKeyForex = 'CLgVZ2SmUW1P0EEa2ryKYZf7yeXRUL58';
 
-var pageSize = 10;
-var minPrice = '';
-var maxPrice = '';
-var toSearch = 'samsung 4k';
+var pageSize = '100';
+var minPrice = '0';
+var maxPrice = '9999';
+var toSearch = 'lg';
+var condition = ['new', 'refurbished'];
 var searchEbay = toSearch.split(' ').join('%20');
 var searchBesBuy = toSearch.split(' ').join('&search=');
 var sortOrderType = [
@@ -20,15 +21,18 @@ var sortOrderType = [
 // var bestBuyTmp = [];
 
 // BestBuy filter
-var attributes = "&salePrice>800" +
-    "&salePrice<1500" +
-    "&(categoryPath.id=abcat0101000))";
+var attributes = '&salePrice>' + minPrice + '&salePrice<' + maxPrice + '&condition='+ condition.join('&condition=')+'&(categoryPath.id=abcat0800000))';
 
 // Create a JavaScript array of the item filters you want to use in your request
 var filterarray = [
     {
         "name": "MinPrice",
-        "value": "250",
+        "value": minPrice,
+        "paramName": "Currency",
+        "paramValue": "EUR"
+    }, {
+        "name": "MaxPrice",
+        "value": maxPrice,
         "paramName": "Currency",
         "paramValue": "EUR"
     }, {
@@ -43,6 +47,12 @@ var filterarray = [
         ],
         "paramName": "",
         "paramValue": ""
+    }, {
+        "name": "Condition",
+        "value": ["1000", "2000"]
+    }, {
+        "name": "HideDuplicateItems",
+        "value": "true"
     }
 ];
 
@@ -100,7 +110,7 @@ var urlBB = "https://api.bestbuy.com/v1/products(" +
     "&format=json";
 //#endregion
 
-getCurrency();
+// getCurrency();
 
 //#region - Api request
 function ajaxRequest(platform, url, callback, callbackError) {
