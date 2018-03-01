@@ -8,6 +8,7 @@ class CatalogComponent extends React.Component  {
             minPrice:0,
             maxPrice:Number.MAX_VALUE,
             productType:/.*/i,
+            errorLoad:undefined
         };
     }
 
@@ -29,6 +30,9 @@ class CatalogComponent extends React.Component  {
     requestError(erroInfo){
         $('.catalog').parent().removeClass('spinner');
         console.log(errorInfo);
+        this.setState({
+            errorLoad:errorInfo
+        });
     }
 
     getAllTypes(){
@@ -168,9 +172,35 @@ class CatalogComponent extends React.Component  {
         }
     }
 
+    getCatalog(){
+        const products = this.getFilteredProducts();
+        return(
+            <div className="catalog">
+                <div className="row">
+                {
+                    products.map(
+                        (product)=><ProductComponent key={`${product.id}${product.name}`} data={product}/>
+                    )
+                }
+                </div>
+            </div>
+        );
+    }
+
+    getErrorMessage(errorMessage){
+        return(
+            <div className="card text-white bg-danger mb-3" style={{margin:'2vw'}}>
+            <div className="card-header">Error {errorMessage}</div>
+            <div className="card-body">
+                <h5 className="card-title">Error de Carga</h5>
+                <p className="card-text">Ha habido un error de carga en la API.</p>
+            </div>
+            </div>
+        );
+    }
+
     render(){
         const types = this.getAllTypes();
-        const products = this.getFilteredProducts();
         return(
             <div>
                 {/*<Header/>*/}
@@ -198,15 +228,8 @@ class CatalogComponent extends React.Component  {
                         </div>
                     </div>
                     <div className="col-sm-9 col-md-10">
-                        <div className="catalog">
-                            <div className="row">
-                            {
-                                products.map(
-                                    (product)=><ProductComponent key={`${product.id}${product.name}`} data={product}/>
-                                )
-                            }
-                            </div>
-                        </div>
+                        {this.state.errorLoad && this.getErrorMessage(this.state.errorLoad)}
+                        {!this.state.errorLoad && this.getCatalog()}
                     </div>
                 </div>
                 {/*<Footer/>*/}
