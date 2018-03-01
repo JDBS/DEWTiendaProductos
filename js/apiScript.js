@@ -9,7 +9,8 @@ var pageSize = '100';
 var minPrice = '0';
 var maxPrice = '9999';
 var toSearch = 'lg';
-var condition = ['new', 'refurbished'];
+var page = 1;
+// var condition = ['new', 'refurbished'];
 var searchEbay = toSearch.split(' ').join('%20');
 var searchBesBuy = toSearch.split(' ').join('&search=');
 var sortOrderType = [
@@ -21,7 +22,7 @@ var sortOrderType = [
 // var bestBuyTmp = [];
 
 // BestBuy filter
-var attributes = '&salePrice>' + minPrice + '&salePrice<' + maxPrice + '&condition='+ condition.join('&condition=')+'&(categoryPath.id=abcat0800000))';
+var attributes = '&salePrice>' + minPrice + '&salePrice<' + maxPrice +'&(categoryPath.id=abcat0800000))';
 
 // Create a JavaScript array of the item filters you want to use in your request
 var filterarray = [
@@ -55,7 +56,36 @@ var filterarray = [
         "value": "true"
     }
 ];
-
+let productCategory = [{
+    'Ebay': {
+        'tv': {
+            'name': 'TV',
+            'id': '11071',
+        },
+        'Health': {
+            'name': 'Health',
+            'id': '',
+        },
+        'phone': {
+            'name': 'Smartphones',
+            'id': '',
+        },
+    },
+    'BestBuy': {
+        'tv': {
+            'name': 'TV',
+            'id': 'abcat0101000',
+        },
+        'Health': {
+            'name': 'Health',
+            'id': 'pcmcat242800050021',
+        },
+        'phone': {
+            'name': 'Smartphones',
+            'id': 'abcat0800000',
+        },
+    }
+}];
 
 // Define global variable for the URL filter
 var urlfilter = "";
@@ -95,6 +125,7 @@ var url = "http://svcs.ebay.com/services/search/FindingService/v1"
     + "&REST-PAYLOAD"
     + "&keywords=" + searchEbay
     + "&paginationInput.entriesPerPage=" + pageSize
+    + "&paginationInput.pageNumber=" + page
     + "&GLOBAL-ID=EBAY-ES"
     + urlfilter
     + `&sortOrder=${sortOrderType[0]}`;
@@ -135,14 +166,13 @@ function ajaxRequest(platform, url, callback, callbackError) {
             url: urlBB,
             type: 'GET',
             dataType: 'json',
-            timeout: 3000,
             success: function (data) {
                 getProducts(data, 'BestBuy');
             },
             error: function (jqXHR, status) {
                 callbackError(jqXHR, status);
             },
-            complete: function (jqXHR, status) {
+            complete: function (response, jqXHR, status) {
                 if (callback)
                     callback();
             }
@@ -154,7 +184,6 @@ function getCurrency(callback) {
         url: `https://forex.1forge.com/1.0.3/quotes?pairs=USDEUR&api_key=${apiKeyForex}`,
         type: 'GET',
         dataType: 'json',
-        timeout: 3000,
         success: function (data) {
             localStorage.setItem('convertFactor', data[0].price);
         },
@@ -163,6 +192,7 @@ function getCurrency(callback) {
         },
         complete: function (jqXHR, status) {
             ajaxRequest('Ebay', url, callback);
+
             ajaxRequest('BestBuy', urlBB, callback);
         }
     });
