@@ -77,17 +77,17 @@ function buildURLArray() {
 buildURLArray(filterarray);
 //#region - Api Url
 // Construct the request Replace MyAppID with your Production AppID
-var url = "http://svcs.ebay.com/services/search/FindingService/v1";
-url += "?SECURITY-APPNAME=" + apikeyEbay;
-url += "&OPERATION-NAME=findItemsByKeywords";
-url += "&SERVICE-VERSION=1.0.0";
-url += "&RESPONSE-DATA-FORMAT=JSON";
-url += "&REST-PAYLOAD";
-url += "&keywords=" + searchEbay;
-url += "&paginationInput.entriesPerPage=" + pageSize;
-url += "&GLOBAL-ID=EBAY-ES";
-url += urlfilter;
-url += `&sortOrder=${sortOrderType[0]}`;
+var url = "http://svcs.ebay.com/services/search/FindingService/v1"
+    + "?SECURITY-APPNAME=" + apikeyEbay
+    + "&OPERATION-NAME=findItemsByKeywords"
+    + "&SERVICE-VERSION=1.0.0"
+    + "&RESPONSE-DATA-FORMAT=JSON"
+    + "&REST-PAYLOAD"
+    + "&keywords=" + searchEbay
+    + "&paginationInput.entriesPerPage=" + pageSize
+    + "&GLOBAL-ID=EBAY-ES"
+    + urlfilter
+    + `&sortOrder=${sortOrderType[0]}`;
 
 var urlBB = "https://api.bestbuy.com/v1/products(" +
     "(search=" + searchBesBuy + ")" +
@@ -98,37 +98,26 @@ var urlBB = "https://api.bestbuy.com/v1/products(" +
     "&sort=salePrice.asc" +
     "&show=image,salePrice,modelNumber,longDescription,thumbnailImage,shortDescription,name,modelNumber,categoryPath.name,categoryPath.id" +
     "&format=json";
-ajaxRequest('Ebay', url);
-ajaxRequest('BestBuy', urlBB);
 //#endregion
+
+getCurrency();
+
 //#region - Api request
-function ajaxRequest(platform, url) {
+function ajaxRequest(platform, url, callback, callbackError) {
     if (platform === 'Ebay')
         $.ajax({
             url: url,
             jsonp: 'callback',
             dataType: 'jsonp',
-            beforeSend: function () {
-                // $('#loader').show();
-            },
             success: function (response) {
-                console.log(response);
                 getProducts(response, 'Ebay');
             },
-            error: function (jqXHR, status, error) { //función error
-                console.error('Can\'t do because: ' + jqXHR, status, error);
+            error: function (jqXHR, status) {
+                callbackError(jqXHR, status);
             },
             complete: function (jqXHR, status) {
-                if (jqXHR.status === 409) {
-                    // $('#loader').hide();
-                    // $divCharacters.children().remove();
-                    // $divCharacters.append($('<span>There has been a problem with the server. Please try again later.</span>'));
-                    // $divComics.children().remove();
-                    // $divComics.append($('<span>There has been a problem with the server. Please try again later.</span>'));
-                }
-                else {
-                    console.log('Done');
-                }
+                if (callback)
+                    callback();
             }
         });
     if (platform === 'BestBuy')
@@ -137,69 +126,36 @@ function ajaxRequest(platform, url) {
             type: 'GET',
             dataType: 'json',
             timeout: 3000,
-            beforeSend: function () {
-                // $('#loader').show();
-            },
             success: function (data) {
                 getProducts(data, 'BestBuy');
             },
-            error: function (jqXHR, status, error) { //función error
-                console.error('Can\'t do because: ' + jqXHR.responseJSON.code + ' , ' + jqXHR.responseJSON.message);
+            error: function (jqXHR, status) {
+                callbackError(jqXHR, status);
             },
             complete: function (jqXHR, status) {
-                if (jqXHR.status === 409) {
-                    // $('#loader').hide();
-                    // $divCharacters.children().remove();
-                    // $divCharacters.append($('<span>There has been a problem with the server. Please try again later.</span>'));
-                    // $divComics.children().remove();
-                    // $divComics.append($('<span>There has been a problem with the server. Please try again later.</span>'));
-                }
-                else {
-                    console.log('Done');
-                }
+                if (callback)
+                    callback();
             }
         });
-
 }
 
-function convertCurrency(list) {
-    let times = 0;
-    // var forexUrl = `https://forex.1forge.com/1.0.3/convert?from=USD&to=EUR&quantity=${value}&api_key=${apiKeyForex}`;
-    list.forEach(e => {
-        if (e.platform === 'BestBuy')
-            $.ajax({
-                url: `https://forex.1forge.com/1.0.3/convert?from=USD&to=EUR&quantity=${Math.ceil(e.price)}&api_key=${apiKeyForex}`,
-                type: 'GET',
-                dataType: 'json',
-                timeout: 3000,
-                beforeSend: function () {
-                    // $('#loader').show();
-                },
-                success: function (data) {
-                    if (data.value !== null || data.value !== undefined)
-                        e.price = Math.round(data.value * 100) / 100;
-                },
-                error: function (jqXHR, status, error) { //función error
-                    console.error('Can\'t do because: ' + jqXHR.responseJSON.code + ' , ' + jqXHR.responseJSON.message);
-                },
-                complete: function (jqXHR, status) {
-                    if (jqXHR.status === 409) {
-                        // $('#loader').hide();
-                        // $divCharacters.children().remove();
-                        // $divCharacters.append($('<span>There has been a problem with the server. Please try again later.</span>'));
-                        // $divComics.children().remove();
-                        // $divComics.append($('<span>There has been a problem with the server. Please try again later.</span>'));
-                    }
-                    else {
-                        times++;
-                        if (times === (list.length / 2))
-                            localStorage.setItem('productList', JSON.stringify(list));
-                        // return price;
-
-                    }
-                }
-            });
+function getCurrency(callback) {
+    $.ajax({
+        url: `https://forex.1forge.com/1.0.3/quotes?pairs=USDEUR&api_key=${apiKeyForex}`,
+        type: 'GET',
+        dataType: 'json',
+        timeout: 3000,
+        success: function (data) {
+            localStorage.setItem('convertFactor', data[0].price);
+        },
+        error: function (jqXHR, status, error) { //función error
+            callbackError(jqXHR, status);
+        },
+        complete: function (jqXHR, status) {
+            ajaxRequest('Ebay', url, callback);
+            ajaxRequest('BestBuy', urlBB, callback);
+        }
     });
-
 }
+
 //#endregion
