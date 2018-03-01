@@ -14,3 +14,36 @@
     background-position: center;
     background-size: 15vw;
 }
+
+
+.max-2-lines {
+    display: block; /* or inline-block */
+    text-overflow: ellipsis;
+    word-wrap: break-word;
+    overflow: hidden;
+    max-height: 3.6em;
+    line-height: 1.8em;
+}
+
+.max-3-lines {
+    display: block; /* or inline-block */
+    text-overflow: ellipsis;
+    word-wrap: break-word;
+    overflow: hidden;
+    max-height: 5.4em;
+    line-height: 1.8em;
+}
+.max-4-lines {
+    display: block; /* or inline-block */
+    text-overflow: ellipsis;
+    word-wrap: break-word;
+    overflow: hidden;
+    max-height: 7.2em;
+    line-height: 1.8em;
+}
+
+.card-footer-flex{
+    display:flex;
+    justify-content: space-between;
+    align-items:center;
+}
