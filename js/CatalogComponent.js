@@ -3,7 +3,7 @@ class CatalogComponent extends React.Component  {
     constructor(props) {
         super(props);
         this.state={
-            allProducts:load('productList'),
+            allProducts:[],
             searchRegExp:/.*/i,
             minPrice:0,
             maxPrice:Number.MAX_VALUE,
@@ -11,6 +11,25 @@ class CatalogComponent extends React.Component  {
         };
     }
 
+    componentDidMount(){
+        $('.catalog').parent().addClass('spinner');
+        getCurrency(
+            this.updateProducts.bind(this),
+            this.requesError
+        );
+    }
+    
+    updateProducts(){
+        $('.catalog').parent().removeClass('spinner');
+        this.setState({
+            allProducts:load('productList')
+        });
+    }
+
+    requestError(erroInfo){
+        $('.catalog').parent().removeClass('spinner');
+        console.log(errorInfo);
+    }
 
     getAllTypes(){
         const allProducts=this.state.allProducts;
@@ -24,6 +43,7 @@ class CatalogComponent extends React.Component  {
         );
         return types;
     }
+
 
     filterBySearch(productList){
         const regExp= this.state.searchRegExp;

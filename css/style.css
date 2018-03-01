@@ -7,3 +7,10 @@
 .custom-card-image img{
     height: 100%;
 }
+
+.spinner{
+    background: url('../assets/images/spinner.gif');
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: 15vw;
+}
