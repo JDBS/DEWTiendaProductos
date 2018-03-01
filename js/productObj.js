@@ -11,17 +11,30 @@ Product = function (name, description, price, typeId, typeName, image, platform)
 };
 let count = 0;
 let productList = [];
+let productCategory = [{
+    'Ebay': {
+        'tv': '',
+        'Health': '',
+        'phone': '',
+    },
+    'BestBuy': {
+        'tv': 'abcat0101000',
+        'Health': 'pcmcat242800050021',
+        'phone': 'pcmcat209400050001',
+    }
+}];
 
 function getProducts(data, api) {
     let product, items, name, manufacture, img, price, description, typeId, typeName;
 
     if (api === 'BestBuy') {
+        let cF = localStorage.getItem('convertFactor');
         items = data.products;
         for (let i = 0; i < items.length; ++i) {
             name = items[i].name;
             // manufacture = items[i].manufacturer;
             img = items[i].image;
-            price = items[i].salePrice;
+            price = (items[i].salePrice * cF).toFixed(2);
             description = items[i].shortDescription;
             typeId = items[i].categoryPath[1].id;
             typeName = items[i].categoryPath[1].name;
@@ -46,13 +59,12 @@ function getProducts(data, api) {
         }
     }
 
-    for(let i = 0; i < productList.length; ++i){
-        productList[i].id=idAsigner.getId();
+    for (let i = 0; i < productList.length; ++i) {
+        productList[i].id = idAsigner.getId();
     }
 
     count++;
-    if (count === 2){
-        // localStorage.setItem('productList', JSON.stringify(productList));
-        convertCurrency(productList);
+    if (count === 2) {
+        localStorage.setItem('productList', JSON.stringify(productList));
     }
 }
