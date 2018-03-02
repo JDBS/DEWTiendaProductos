@@ -172,6 +172,7 @@ class CatalogComponent extends React.Component  {
         return(
             <div>
                 {/*<Header/>*/}
+                <LoginButtonComponent/>
                 <div className="input-group">    
                     <input type="text" onChange={this.doSearch.bind(this)} className="form-control" name="x" placeholder="Buscar..."/>
                 </div>
