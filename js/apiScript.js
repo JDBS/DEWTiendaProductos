@@ -6,7 +6,9 @@ var apikeyBestBuy = 'A0iJvovzx1h8jN9IXhGSCwjm';
 var apiKeyForex = 'CLgVZ2SmUW1P0EEa2ryKYZf7yeXRUL58';
 
 var pageSize = '100';
-var toSearch = 'lg';
+var toSearch = 'trending';
+var minPrice = 0;
+var maxPrice = 999;
 var page = 1;
 // var condition = ['new', 'refurbished'];
 var searchEbay = toSearch.split(' ').join('%20');
@@ -19,7 +21,7 @@ var sortOrderType = [
 ];
 
 // BestBuy filter
-var attributes = '&(categoryPath.id=abcat0800000))';
+var attributes = '';//'&(categoryPath.id=abcat0800000))';
 
 // Create a JavaScript array of the item filters you want to use in your request
 var filterarray = [
@@ -51,34 +53,9 @@ var filterarray = [
     }
 ];
 let productCategory = [{
-    'Ebay': {
-        'tv': {
-            'name': 'TV',
-            'id': '11071',
-        },
-        'Health': {
-            'name': 'Health',
-            'id': '',
-        },
-        'phone': {
-            'name': 'Smartphones',
-            'id': '',
-        },
-    },
-    'BestBuy': {
-        'tv': {
-            'name': 'TV',
-            'id': 'abcat0101000',
-        },
-        'Health': {
-            'name': 'Health',
-            'id': 'pcmcat242800050021',
-        },
-        'phone': {
-            'name': 'Smartphones',
-            'id': 'abcat0800000',
-        },
-    }
+    0: 'TV',
+    1: 'Health',
+    2: 'Smartphones',
 }];
 
 // Define global variable for the URL filter
@@ -112,25 +89,19 @@ buildURLArray(filterarray);
 //#region - Api Url
 // Construct the request Replace MyAppID with your Production AppID
 var url = "http://svcs.ebay.com/services/search/FindingService/v1"
-    + "?SECURITY-APPNAME=" + apikeyEbay
-    + "&OPERATION-NAME=findItemsByKeywords"
-    + "&SERVICE-VERSION=1.0.0"
-    + "&RESPONSE-DATA-FORMAT=JSON"
-    + "&REST-PAYLOAD"
-    + "&keywords=" + searchEbay
+    + "?SECURITY-APPNAME=" + apikeyEbay + "&OPERATION-NAME=findItemsByKeywords"
+    + "&SERVICE-VERSION=1.0.0" + "&RESPONSE-DATA-FORMAT=JSON"
+    + "&REST-PAYLOAD" + "&keywords=" + searchEbay
     + "&paginationInput.entriesPerPage=" + pageSize
     + "&paginationInput.pageNumber=" + page
-    + "&GLOBAL-ID=EBAY-ES"
-    + urlfilter
+    + "&GLOBAL-ID=EBAY-ES" + urlfilter
     + `&sortOrder=${sortOrderType[0]}`;
 
 var urlBB = "https://api.bestbuy.com/v1/products(" +
-    "(search=" + searchBesBuy + ")" +
-    attributes +
+    "(search=" + searchBesBuy + ")" + attributes +
     // "&manufacturer=samsung" +
-    // "&(categoryPath.id=abcat0101000))" +
-    "?apiKey=" + apikeyBestBuy +
-    "&sort=salePrice.asc" +
+    // "&(categoryPath.name=abcat0101000))" +
+    "?apiKey=" + apikeyBestBuy + "&sort=salePrice.asc" +
     "&show=image,salePrice,modelNumber,longDescription,thumbnailImage,shortDescription,name,modelNumber,categoryPath.name,categoryPath.id" +
     "&format=json";
 //#endregion
@@ -138,6 +109,13 @@ var urlBB = "https://api.bestbuy.com/v1/products(" +
 // getCurrency();
 
 //#region - Api request
+/**
+ * It makes the requests to get the products
+ * @param platform - Store name
+ * @param url - url with the parameters
+ * @param callback - Function to know when the data is loaded
+ * @param callbackError - Function to know if have been an error
+ */
 function ajaxRequest(platform, url, callback, callbackError) {
     if (platform === 'Ebay')
         $.ajax({
@@ -164,10 +142,13 @@ function ajaxRequest(platform, url, callback, callbackError) {
             },
         });
 }
-{
-    color:verde
-}
-function getCurrency(callback,data) {
+
+/**
+ * It gets money change factor, then call the stores ajax call
+ * @param callback - Function to know when the data is loaded
+ * @param data - Array of items to search
+ */
+function getCurrency(callback, data) {
     $.ajax({
         url: `https://forex.1forge.com/1.0.3/quotes?pairs=USDEUR&api_key=${apiKeyForex}`,
         type: 'GET',
@@ -180,10 +161,8 @@ function getCurrency(callback,data) {
         },
         complete: function (jqXHR, status) {
             ajaxRequest('Ebay', url, callback);
-
             ajaxRequest('BestBuy', urlBB, callback);
         }
     });
 }
-
 //#endregion
