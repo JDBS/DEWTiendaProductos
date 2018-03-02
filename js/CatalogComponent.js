@@ -1,30 +1,75 @@
+const DELAY_BETWEEN_SEARCHS_MS=3000;
 
 class CatalogComponent extends React.Component  {
     constructor(props) {
         super(props);
         this.state={
-            allProducts:[],
-            searchRegExp:/.*/i,
-            minPrice:0,
-            maxPrice:Number.MAX_VALUE,
-            productType:/.*/i,
+            productList:[],
+            loading:false,
             errorLoad:undefined
         };
+        
+        this.search='';
+        this.minPrice=0;
+        this.maxPrice=Number.MAX_VALUE;
+        this.productType='';
+        this.changes=false;
+        this.lastChangeTime=new Date();
     }
 
     componentDidMount(){
-        $('.catalog').parent().addClass('spinner');
-        getCurrency(
-            this.updateProducts.bind(this),
-            this.requesError
-        );
+        this.load();
     }
     
-    updateProducts(){
-        $('.catalog').parent().removeClass('spinner');
+
+    load() {
+        if(this.state.loading){
+            this.changes=true;
+            return;
+        }else{
+            const now = new Date();
+            const delay = now - this.lastChangeTime;
+            if(delay<DELAY_BETWEEN_SEARCHS_MS){
+                return;
+            }
+            else
+            {
+                this.lastChangeTime=now;
+                setTimeout(this.load.bind(this),DELAY_BETWEEN_SEARCHS_MS-delay);
+            }
+            this.changes=false;
+        }
+        
+        getCurrency(
+            this.updateProducts.bind(this),
+            this.requestError.bind(this),
+            {
+                search:this.search,
+                minPrice:this.minPrice,
+                maxPrice:this.maxPrice,
+                categoria:this.productType
+            }
+        );
+        $('.catalog').parent().addClass('spinner');
         this.setState({
-            allProducts:load('productList')
+            productList:[],
+            loading:true
         });
+    }
+
+    unsetLoading(){
+        $('.catalog').parent().removeClass('spinner');
+        this.setState({loading:false});
+    }
+
+    updateProducts(){
+        this.unsetLoading();
+        this.setState({
+            productList:load('productList')
+        });
+        if(this.changes){
+            this.load();
+        }
     }
 
     requestError(erroInfo){
@@ -35,89 +80,17 @@ class CatalogComponent extends React.Component  {
         });
     }
 
-    getAllTypes(){
-        const allProducts=this.state.allProducts;
-        const types=[];
-        allProducts.forEach(
-            (product)=>{
-                if(!types.includes(product.productType.typeName)){
-                    types.push(product.productType.typeName);
-                }
-            }
-        );
-        return types;
-    }
-
-
-    filterBySearch(productList){
-        const regExp= this.state.searchRegExp;
-
-        const filteredProductList = productList.filter(
-            (product)=>regExp.test(product.name)
-        );
-
-        return filteredProductList;
-    }
-
-    filterByMinPrice(productList){
-        const minPrice = this.state.minPrice;
-        
-        const filteredProductList=productList.filter(
-            (product)=>minPrice <= product.price
-        );
-
-        return filteredProductList;
-    }
-
-    filterByMaxPrice(productList){
-        if(this.state.maxPrice===0){
-            return productList;
-        }
-
-        const maxPrice = this.state.maxPrice;
-        
-        const filteredProductList=productList.filter(
-            (product)=>maxPrice >= product.price
-        );
-
-        return filteredProductList;
-    }
-
-    filterByType(productList){
-        const regExp= this.state.productType;
-
-        const filteredProductList=productList.filter(
-            (product)=>regExp.test(product.productType.typeName)
-        );
-
-        return filteredProductList;
-    }
-
-    getFilteredProducts(){
-        let products=this.state.allProducts;
-        
-        products=this.filterBySearch(products);
-        products=this.filterByMinPrice(products);
-        products=this.filterByMaxPrice(products);
-        products=this.filterByType(products);
-
-        return products;
-    }
 
     doSearch(event){
         const target = event.target;
-        const value = target.value
-                            .replace(/[-[\]{}()*+?.,\\^$|#\s]/g, '\\$&');
+        const value = target.value;
         
         if(value.length!==0){
-            this.setState({
-                searchRegExp:new RegExp(value,'i')
-            });
+            this.searchRegExp=value;
         }else{
-            this.setState({
-                searchRegExp:/.*/i
-            });
+            this.searchRegExp='';
         }
+        this.load();
     }
 
     setMinPrice(event){
@@ -125,36 +98,29 @@ class CatalogComponent extends React.Component  {
         const minPrice = parseFloat(target.value);
         
         if(Number.isNaN(minPrice) || minPrice<=0){
-            this.setState({
-                minPrice:0
-            });
+            this.minPrice=0;
         }else{
-            this.setState({
-                minPrice:minPrice
-            });
+            this.minPrice=minPrice;
         }
+        this.load();
     }    
     
     setMaxPrice(event){
         const target = event.target;
         let maxPrice = parseFloat(target.value);
-        const minPrice = this.state.minPrice;
+        const minPrice = this.minPrice;
 
         if(Number.isNaN(maxPrice)){
-            this.setState({
-                maxPrice:Number.MAX_VALUE
-            });
+            maxPrice=Number.MAX_VALUE;
         }else if(maxPrice<=minPrice){
             maxPrice=minPrice+1;
             event.target.value=maxPrice;
-            this.setState({
-                maxPrice:minPrice+1
-            });
+
+            this.maxPrice=minPrice+1;
         }else{
-            this.setState({
-                maxPrice:maxPrice
-            });
+            this.maxPrice=maxPrice;
         }
+        this.load();
     }
 
     setCategory(event){
@@ -162,18 +128,16 @@ class CatalogComponent extends React.Component  {
         const productType = target.value;
 
         if(productType.length!==0){
-            this.setState({
-                productType:new RegExp(productType,'i')
-            });
+            this.productType=productType;
         }else{
-            this.setState({
-                productType:/.*/i
-            });
+            this.productType='';
         }
+        this.load();
     }
 
+
     getCatalog(){
-        const products = this.getFilteredProducts();
+        const products = this.state.productList;
         return(
             <div className="catalog">
                 <div className="row">
@@ -200,7 +164,6 @@ class CatalogComponent extends React.Component  {
     }
 
     render(){
-        const types = this.getAllTypes();
         return(
             <div>
                 {/*<Header/>*/}
@@ -212,12 +175,10 @@ class CatalogComponent extends React.Component  {
                         <label htmlFor="categorySelect">
                             <h4>Categorías</h4>
                             <select id="categorySelect" onChange={this.setCategory.bind(this)} className="form-control">
-                                <option value={''}>Mostrar Todo</option>
-                                {
-                                    types.map(
-                                        (type)=><option key={type} value={type}>{type}</option>
-                                    )
-                                }
+                                <option value={'all'}>Mostrar Todo</option>
+                                <option value={'tv'}>{'TV & Health'}</option>
+                                <option value={'health'}>{'Fitness & Beauty'}</option>
+                                <option value={'phone'}>{'Smartphones'}</option>
                             </select>
                         </label>
                         <div className="form-group">
