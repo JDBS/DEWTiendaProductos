@@ -26,18 +26,14 @@ $(document).ready(() => {
 
     function loginGoogle() {
         fireBaseLog(new firebase.auth.GoogleAuthProvider());
-
     }
 
     function loginFaceBook() {
         fireBaseLog(new firebase.auth.FacebookAuthProvider());
-
     }
 
     function loginTwitter() {
-        let provider = new firebase.auth.TwitterAuthProvider();
         fireBaseLog(new firebase.auth.TwitterAuthProvider());
-
     }
 
     function loginGitHub() {

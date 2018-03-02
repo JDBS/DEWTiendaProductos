@@ -134,8 +134,8 @@ function ajaxRequest(platform, url, callback, callbackError) {
             url: urlBB,
             type: 'GET',
             dataType: 'json',
-            success: function (data) {
-                getProducts(data, 'BestBuy', callback);
+            success: function (response) {
+                getProducts(response, 'BestBuy', callback);
             },
             error: function (jqXHR, status) {
                 callbackError(jqXHR, status);
@@ -148,20 +148,22 @@ function ajaxRequest(platform, url, callback, callbackError) {
  * @param callback - Function to know when the data is loaded
  * @param data - Array of items to search
  */
-function getCurrency(callback, data) {
+function getCurrency(callback, callbackError, data) {
+    maxPrice = data.maxPrice;
+    minPrice = data.minPrice;
     $.ajax({
         url: `https://forex.1forge.com/1.0.3/quotes?pairs=USDEUR&api_key=${apiKeyForex}`,
         type: 'GET',
         dataType: 'json',
-        success: function (data) {
-            localStorage.setItem('convertFactor', data[0].price);
+        success: function (response) {
+            localStorage.setItem('convertFactor', response[0].price);
         },
         error: function (jqXHR, status, error) { //función error
             callbackError(jqXHR, status);
         },
         complete: function (jqXHR, status) {
-            ajaxRequest('Ebay', url, callback);
-            ajaxRequest('BestBuy', urlBB, callback);
+            ajaxRequest('Ebay', url, callback, callbackError);
+            ajaxRequest('BestBuy', urlBB, callback, callbackError);
         }
     });
 }
