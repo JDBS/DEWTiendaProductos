@@ -1,9 +1,9 @@
 $(document).ready(() => {
-    $('#google').click(loginGoogle);
-    $('#facebook').click(loginFaceBook);
-    $('#github').click(loginGitHub);
-    $('#twitter').click(loginTwitter);
-    $('#logOut').click(logOut);
+    document.getElementById('google').addEventListener('click', loginGoogle, false);
+    document.getElementById('facebook').addEventListener('click', loginFaceBook, false);
+    document.getElementById('github').addEventListener('click', loginGitHub, false);
+    document.getElementById('twitter').addEventListener('click', loginTwitter, false);
+    // document.getElementById('logOut').addEventListener('click', logOut, false);
 
     // Initialize Firebase
     var config = {
@@ -26,6 +26,7 @@ $(document).ready(() => {
 
     function loginGoogle() {
         let provider = new firebase.auth.GoogleAuthProvider();
+        fireBaseLog(provider);
         // firebase.auth().signInWithPopup(provider).then(function (result) {
         //     var user = result.additionalUserInfo.username;
         //     console.log(result);
@@ -41,6 +42,7 @@ $(document).ready(() => {
 
     function loginFaceBook() {
         let provider = new firebase.auth.FacebookAuthProvider();
+        fireBaseLog(provider);
         // firebase.auth().signInWithPopup(provider).then(function (result) {
         //     var user = result.additionalUserInfo.username;
         //     console.log(result);
@@ -56,6 +58,7 @@ $(document).ready(() => {
 
     function loginTwitter() {
         let provider = new firebase.auth.TwitterAuthProvider();
+        fireBaseLog(provider);        
         // firebase.auth().signInWithPopup(provider).then(function (result) {
         //     var user = result.additionalUserInfo.username;
         //     console.log(result);
@@ -71,6 +74,7 @@ $(document).ready(() => {
 
     function loginGitHub() {
         let provider = new firebase.auth.GithubAuthProvider();
+        fireBaseLog(provider);
         // firebase.auth().signInWithPopup(provider).then(function (result) {
         //     var user = result.additionalUserInfo.username;
         //     console.log(result);
@@ -84,22 +88,22 @@ $(document).ready(() => {
         // });
     }
 
-    // function fireBaseLog(provider) {
-    //     firebase.auth().signInWithPopup(provider).then(function (result) {
-    //         var user = result.additionalUserInfo.username;
-    //         console.log(result);
-    //         localStorage.setItem("userLogged", user);
-    //         window.location.href = "index.html";
-    //     }).catch(function (error) {
-    //         // Handle Errors here.
-    //         var errorCode = error.code;
-    //         var errorMessage = error.message;
-    //         console.log(errorCode, errorMessage);
-    //     });
-    // }
+    function fireBaseLog(provider) {
+        firebase.auth().signInWithPopup(provider).then(function (result) {
+            var user = result.additionalUserInfo.username;
+            console.log(result);
+            localStorage.setItem("userLogged", user);
+            window.location.href = "index.html";
+        }).catch(function (error) {
+            // Handle Errors here.
+            var errorCode = error.code;
+            var errorMessage = error.message;
+            console.log(errorCode, errorMessage);
+        });
+    }
 
     function logOut() {
         localStorage.removeItem("userLogged");
-        window.location.href = "login.html"
+        window.location.href = "login.html";
     }
 });

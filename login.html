@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,37 +8,49 @@
     <title>Title</title>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="css/login.css">
 </head>
+
 <body>
-<!-- navbar -->
-<nav class="navbar navbar-dark bg-dark">
-    <a class="navbar-brand navbar-login" href="index.html">Inicio
-    </a>
-</nav>
-<br/>
-<div class="container">
-    <form class="form-signin">
-        <h2 class="form-signin-heading text-center">Puedes iniciar sesión en <strong>EBest</strong><br> con su cuenta de redes sociales</h2>
-        <div class="row">
-            <div class="col-8 mx-auto">
-                    <button type="button" class="btn btn-secondary mt-3" id="google" style="font-size:24px">Sign in with
-                        <i class="fa fa-google-plus-square"></i></button>
-                    <button type="button" class="btn btn-secondary mt-3" id="facebook" style="font-size:24px">Sign in with
-                        <i class="fa fa-facebook-square"></i></button>
-                    <button type="button" class="btn btn-secondary mt-3" id="github" style="font-size:24px">Sign in with
-                        <i class="fa fa-github-square"></i></button>
-                    <button type="button" class="btn btn-secondary mt-3" id="twitter" style="font-size:24px">Sign in with
-                        <i class="fa fa-twitter-square"></i></button>
+    <!-- navbar -->
+    <nav class="navbar navbar-dark bg-dark">
+        <a class="navbar-brand navbar-login" href="index.html">Inicio
+        </a>
+    </nav>
+    <br/>
+    <div class="row">
+        <div class="col-8 mx-auto">
+            <div class="jumbotron">
+                <h1 class="display-5">Puedes iniciar sesión en
+                    <strong>EBest</strong>
+                </h1>
+                <p class="lead">con su cuenta de redes sociales</p>
+                <hr class="my-4">
+                <div class="row">
+                    <div class="col-8 mx-auto text-center">
+                        <a class="btn btn-primary btn-lg" href="#" id="google" role="button">
+                            <i class="fa fa-google-plus-square"></i> Sign in with Google</a>
+                        <a class="btn btn-primary btn-lg" href="#" id="facebook" role="button">
+                            <i class="fa fa-facebook-square"></i> Sign in with Facebook</a>
+                    </div>
+                    <div class="col-8 mx-auto text-center mt-2">
+                        <a class="btn btn-primary btn-lg" href="#" id="github" role="button">
+                            <i class="fa fa-github-square"></i> Sign in with GitHub</a>
+                        <a class="btn btn-primary btn-lg" href="#" id="twitter" role="button">
+                            <i class="fa fa-twitter-square"></i> Sign in with Twitter</a>
+                    </div>
+                </div>
             </div>
         </div>
-    </form>
-</div>
-<!--Bootstrap cdns-->
-<script src="js/jquery-3.3.1.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
-<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
-<!--FireBase link-->
-<script src="https://www.gstatic.com/firebasejs/4.10.1/firebase.js"></script>
-<script src="js/Login.js"></script>
+    </div>
+
+    <!--Bootstrap cdns-->
+    <script src="js/jquery-3.3.1.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+    <!--FireBase link-->
+    <script src="https://www.gstatic.com/firebasejs/4.10.1/firebase.js"></script>
+    <script src="js/Login.js"></script>
 </body>
+
 </html>
