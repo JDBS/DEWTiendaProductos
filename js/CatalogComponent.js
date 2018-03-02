@@ -1,4 +1,5 @@
 const DELAY_BETWEEN_SEARCHS_MS=3000;
+const MAX_PRICE_VALUE=99999;
 
 class CatalogComponent extends React.Component  {
     constructor(props) {
@@ -11,7 +12,7 @@ class CatalogComponent extends React.Component  {
         
         this.search='';
         this.minPrice=0;
-        this.maxPrice=Number.MAX_VALUE;
+        this.maxPrice=MAX_PRICE_VALUE;
         this.productType='';
         this.changes=false;
         this.lastChangeTime=new Date();
@@ -30,12 +31,12 @@ class CatalogComponent extends React.Component  {
             const now = new Date();
             const delay = now - this.lastChangeTime;
             if(delay<DELAY_BETWEEN_SEARCHS_MS){
+                setTimeout(this.load.bind(this),DELAY_BETWEEN_SEARCHS_MS-delay);
                 return;
             }
             else
             {
                 this.lastChangeTime=now;
-                setTimeout(this.load.bind(this),DELAY_BETWEEN_SEARCHS_MS-delay);
             }
             this.changes=false;
         }
@@ -76,8 +77,12 @@ class CatalogComponent extends React.Component  {
         $('.catalog').parent().removeClass('spinner');
         console.log(errorInfo);
         this.setState({
+            loading:false,
             errorLoad:errorInfo
         });
+        if(this.changes){
+            this.load();
+        }
     }
 
 
@@ -111,7 +116,7 @@ class CatalogComponent extends React.Component  {
         const minPrice = this.minPrice;
 
         if(Number.isNaN(maxPrice)){
-            maxPrice=Number.MAX_VALUE;
+            maxPrice=MAX_PRICE_VALUE;
         }else if(maxPrice<=minPrice){
             maxPrice=minPrice+1;
             event.target.value=maxPrice;
