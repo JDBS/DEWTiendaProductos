@@ -26,11 +26,12 @@ class LoginButtonComponent extends React.Component{
 
         firebase.initializeApp(config);
 
-        firebase.auth().signOut().then(function () {
+        firebase.auth().signOut().then(() => {
             // Sign-out successful.
             this.setState({
                 logged: false,
             });
+            localStorage.removeItem('userLogged');            
         }).catch(function (error) {
             // An error happened.
             console.log(error);
@@ -51,10 +52,14 @@ class LoginButtonComponent extends React.Component{
             </div>
         );
     }
+    getUser(){
+        return load('userLogged');
+    }
     render () {
         const logged = this.state.logged;
         return (
             <div>
+                {logged && <span>{`Bienvenido ${this.getUser().substring(0,11)}... `}</span>}
                 {logged && this.loggedComponent()}
                 {!logged && this.unLoggedComponent()}
             </div>

@@ -46,9 +46,9 @@ $(document).ready(() => {
 
     function fireBaseLog(provider) {
         firebase.auth().signInWithPopup(provider).then(function (result) {
-            var user = result.additionalUserInfo.username;
+            var user = result.additionalUserInfo.profile.name;
             console.log(result);
-            save("userLogged", user);
+            save(user, "userLogged");
             window.location.href = "index.html";
         }).catch(function (error) {
             // Handle Errors here.
