@@ -31,12 +31,12 @@ class CatalogComponent extends React.Component  {
             const now = new Date();
             const delay = now - this.lastChangeTime;
             if(delay<DELAY_BETWEEN_SEARCHS_MS){
+                setTimeout(this.load.bind(this),DELAY_BETWEEN_SEARCHS_MS-delay);
                 return;
             }
             else
             {
                 this.lastChangeTime=now;
-                setTimeout(this.load.bind(this),DELAY_BETWEEN_SEARCHS_MS-delay);
             }
             this.changes=false;
         }
