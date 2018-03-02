@@ -1,8 +1,8 @@
 $(document).ready(() => {
-    document.getElementById('google').addEventListener('click', loginGoogle, false);
-    document.getElementById('facebook').addEventListener('click', loginFaceBook, false);
-    document.getElementById('github').addEventListener('click', loginGitHub, false);
-    document.getElementById('twitter').addEventListener('click', loginTwitter, false);
+    $('#google').click(loginGoogle);
+    $('#facebook').click(loginFaceBook);
+    $('#github').click(loginGitHub);
+    $('#twitter').click(loginTwitter);
     // document.getElementById('logOut').addEventListener('click', logOut, false);
 
     // Initialize Firebase
