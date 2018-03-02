@@ -6,8 +6,6 @@ var apikeyBestBuy = 'A0iJvovzx1h8jN9IXhGSCwjm';
 var apiKeyForex = 'CLgVZ2SmUW1P0EEa2ryKYZf7yeXRUL58';
 
 var pageSize = '100';
-var minPrice = '0';
-var maxPrice = '9999';
 var toSearch = 'lg';
 var page = 1;
 // var condition = ['new', 'refurbished'];
@@ -19,10 +17,9 @@ var sortOrderType = [
     'DistanceNearest', 'EndTimeSoonest', 'PricePlusShippingHighest',
     'PricePlusShippingLowest', 'StartTimeNewest', 'WatchCountDecreaseSort'
 ];
-// var bestBuyTmp = [];
 
 // BestBuy filter
-var attributes = '&salePrice>' + minPrice + '&salePrice<' + maxPrice +'&(categoryPath.id=abcat0800000))';
+var attributes = '&(categoryPath.id=abcat0800000))';
 
 // Create a JavaScript array of the item filters you want to use in your request
 var filterarray = [
@@ -48,9 +45,6 @@ var filterarray = [
         ],
         "paramName": "",
         "paramValue": ""
-    }, {
-        "name": "Condition",
-        "value": ["1000", "2000"]
     }, {
         "name": "HideDuplicateItems",
         "value": "true"
@@ -151,15 +145,11 @@ function ajaxRequest(platform, url, callback, callbackError) {
             jsonp: 'callback',
             dataType: 'jsonp',
             success: function (response) {
-                getProducts(response, 'Ebay');
+                getProducts(response, 'Ebay', callback);
             },
             error: function (jqXHR, status) {
                 callbackError(jqXHR, status);
             },
-            complete: function (jqXHR, status) {
-                if (callback)
-                    callback();
-            }
         });
     if (platform === 'BestBuy')
         $.ajax({
@@ -167,19 +157,17 @@ function ajaxRequest(platform, url, callback, callbackError) {
             type: 'GET',
             dataType: 'json',
             success: function (data) {
-                getProducts(data, 'BestBuy');
+                getProducts(data, 'BestBuy', callback);
             },
             error: function (jqXHR, status) {
                 callbackError(jqXHR, status);
             },
-            complete: function (response, jqXHR, status) {
-                if (callback)
-                    callback();
-            }
         });
 }
-
-function getCurrency(callback) {
+{
+    color:verde
+}
+function getCurrency(callback,data) {
     $.ajax({
         url: `https://forex.1forge.com/1.0.3/quotes?pairs=USDEUR&api_key=${apiKeyForex}`,
         type: 'GET',

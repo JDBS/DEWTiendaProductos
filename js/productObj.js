@@ -13,14 +13,14 @@ Product = function (id, name, description, price, typeId, typeName, image, platf
 let count = 0;
 let productList = [];
 
-function getProducts(data, api) {
+function getProducts(data, api, callback) {
     let id, product, items, name, manufacture, img, price, description, typeId, typeName;
 
     if (api === 'BestBuy') {
         let cF = localStorage.getItem('convertFactor');
         items = data.products;
         for (let i = 0; i < items.length; ++i) {
-            id = items[0].modelNumber;// + '-' + new Date().getTime();
+            id = items[i].modelNumber;// + '-' + new Date().getTime();
             name = items[i].name;
             // manufacture = items[i].manufacturer;
             img = items[i].image;
@@ -36,7 +36,7 @@ function getProducts(data, api) {
     } else {
         items = data.findItemsByKeywordsResponse[0].searchResult[0].item || [];
         for (let i = 0; i < items.length; ++i) {
-            id = items[0].itemId[0]; // + '-' + new Date().getTime();
+            id = items[i].itemId[0]; // + '-' + new Date().getTime();
             name = items[i].title[0];
             items[i].galleryURL !== undefined ? img = items[i].galleryURL[0] : img = items[i].galleryPlusPictureURL[0];
             price = items[i].sellingStatus[0].currentPrice[0].__value__;
@@ -53,5 +53,6 @@ function getProducts(data, api) {
     count++;
     if (count === 2) {
         localStorage.setItem('productList', JSON.stringify(productList));
+        callback();
     }
 }
