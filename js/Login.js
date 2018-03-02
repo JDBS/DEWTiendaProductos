@@ -27,65 +27,21 @@ $(document).ready(() => {
     function loginGoogle() {
         let provider = new firebase.auth.GoogleAuthProvider();
         fireBaseLog(provider);
-        // firebase.auth().signInWithPopup(provider).then(function (result) {
-        //     var user = result.additionalUserInfo.username;
-        //     console.log(result);
-        //     localStorage.setItem("userLogged", user);
-        //     window.location.href = "index.html";
-        // }).catch(function (error) {
-        //     // Handle Errors here.
-        //     var errorCode = error.code;
-        //     var errorMessage = error.message;
-        //     console.log(errorCode, errorMessage);
-        // });
     }
 
     function loginFaceBook() {
         let provider = new firebase.auth.FacebookAuthProvider();
         fireBaseLog(provider);
-        // firebase.auth().signInWithPopup(provider).then(function (result) {
-        //     var user = result.additionalUserInfo.username;
-        //     console.log(result);
-        //     localStorage.setItem("userLogged", user);
-        //     window.location.href = "index.html";
-        // }).catch(function (error) {
-        //     // Handle Errors here.
-        //     var errorCode = error.code;
-        //     var errorMessage = error.message;
-        //     console.log(errorCode, errorMessage);
-        // });
     }
 
     function loginTwitter() {
         let provider = new firebase.auth.TwitterAuthProvider();
         fireBaseLog(provider);        
-        // firebase.auth().signInWithPopup(provider).then(function (result) {
-        //     var user = result.additionalUserInfo.username;
-        //     console.log(result);
-        //     localStorage.setItem("userLogged", user);
-        //     window.location.href = "index.html";
-        // }).catch(function (error) {
-        //     // Handle Errors here.
-        //     var errorCode = error.code;
-        //     var errorMessage = error.message;
-        //     console.log(errorCode, errorMessage);
-        // });
     }
 
     function loginGitHub() {
         let provider = new firebase.auth.GithubAuthProvider();
         fireBaseLog(provider);
-        // firebase.auth().signInWithPopup(provider).then(function (result) {
-        //     var user = result.additionalUserInfo.username;
-        //     console.log(result);
-        //     localStorage.setItem("userLogged", user);
-        //     window.location.href = "index.html";
-        // }).catch(function (error) {
-        //     // Handle Errors here.
-        //     var errorCode = error.code;
-        //     var errorMessage = error.message;
-        //     console.log(errorCode, errorMessage);
-        // });
     }
 
     function fireBaseLog(provider) {
