@@ -19,24 +19,40 @@ function getProducts(data, api, callback) {
     if (api === 'BestBuy') {
         let cF = localStorage.getItem('convertFactor');
         items = data.products;
-        for (let i = 0; i < items.length; ++i) {
-            id = items[i].modelNumber;// + '-' + new Date().getTime();
-            name = items[i].name;
-            // manufacture = items[i].manufacturer;
-            img = items[i].image;
-            price = (items[i].salePrice * cF).toFixed(2);
-            description = items[i].shortDescription;
-            typeId = items[i].categoryPath[1].id;
-            typeName = items[i].categoryPath[1].name;
-            if (null != name) {
-                product = new Product(id, name, description, price, typeId, typeName, img, 'BestBuy');
+        if (items)
+            for (let i = 0; i < items.length; ++i) {
+                id = items[i].modelNumber;
+                name = items[i].name;
+                img = items[i].image;
+                price = (items[i].salePrice * cF).toFixed(2);
+                description = items[i].shortDescription;
+                typeId = items[i].categoryPath[1].id;
+                typeName = items[i].categoryPath[1].name;
+                if (null != name) {
+                    product = new Product(id, name, description, price, typeId, typeName, img, 'BestBuy');
+                }
+                productList.push(product);
             }
-            productList.push(product);
+        else{
+            items = data.results;
+            for (let i = 0; i < items.length; ++i) {
+                id = items[i].sku;
+                name = items[i].names.title;
+                img = items[i].images.standard;
+                price = (items[i].prices.current * cF).toFixed(2);
+                description = items[i].descriptions.short;
+                typeId = 0;
+                typeName = 'Trending';
+                if (null != name) {
+                    product = new Product(id, name, description, price, typeId, typeName, img, 'BestBuy');
+                }
+                productList.push(product);
+            }
         }
     } else {
         items = data.findItemsByKeywordsResponse[0].searchResult[0].item || [];
         for (let i = 0; i < items.length; ++i) {
-            id = items[i].itemId[0]; // + '-' + new Date().getTime();
+            id = items[i].itemId[0];
             name = items[i].title[0];
             items[i].galleryURL !== undefined ? img = items[i].galleryURL[0] : img = items[i].galleryPlusPictureURL[0];
             price = items[i].sellingStatus[0].currentPrice[0].__value__;

@@ -48,7 +48,7 @@ class CatalogComponent extends React.Component  {
                 search:this.search,
                 minPrice:this.minPrice,
                 maxPrice:this.maxPrice,
-                categoria:this.productType
+                category:this.productType
             }
         );
         $('.catalog').parent().addClass('spinner');
@@ -91,9 +91,9 @@ class CatalogComponent extends React.Component  {
         const value = target.value;
         
         if(value.length!==0){
-            this.searchRegExp=value;
+            this.search=value;
         }else{
-            this.searchRegExp='';
+            this.search='';
         }
         this.load();
     }
