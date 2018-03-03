@@ -1,4 +1,4 @@
-const DELAY_BETWEEN_SEARCHS_MS=3000;
+const DELAY_BETWEEN_SEARCHS_MS=2000;
 const MAX_PRICE_VALUE=99999;
 const ITEMS_PER_PAGE=10;
 
@@ -217,7 +217,7 @@ class CatalogComponent extends React.Component  {
             pages.push(i);
         }
         return (
-            <ul className="pagination">
+            <ul className="pagination mx-auto">
                 <li className="page-item"><a className="page-link" onClick={this.previousPage.bind(this)} href="#">Previous</a></li>
                 {pages.map(
                     (page)=>{
@@ -258,9 +258,9 @@ class CatalogComponent extends React.Component  {
     getErrorMessage(errorMessage){
         return(
             <div className="card text-white bg-danger mb-3" style={{margin:'2vw'}}>
-                <div className="card-header">Error {errorMessage}</div>
+                <div className="card-header">Error de Carga</div>
                 <div className="card-body">
-                    <h5 className="card-title">Error de Carga</h5>
+                    <h5 className="card-title">Error: {errorMessage}</h5>
                     <p className="card-text">Ha habido un error de carga en la API.</p>
                 </div>
             </div>
@@ -281,8 +281,8 @@ class CatalogComponent extends React.Component  {
                             <h4>Categorías</h4>
                             <select id="categorySelect" onChange={this.setCategory.bind(this)} className="form-control">
                                 <option value={'all'}>Mostrar Todo</option>
-                                <option value={'tv'}>{'TV & Health'}</option>
-                                <option value={'health'}>{'Fitness & Beauty'}</option>
+                                <option value={'tv'}>{'TV'}</option>
+                                <option value={'health'}>{'Health, Fitness & Beauty'}</option>
                                 <option value={'phone'}>{'Smartphones'}</option>
                             </select>
                         </label>
