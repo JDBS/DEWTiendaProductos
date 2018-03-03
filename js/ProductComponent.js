@@ -12,6 +12,7 @@ class ProductComponent extends React.Component {
                     </div>
                     <div className="card-footer card-footer-flex">
                         <p className="card-text">{`${this.props.data.price}€`}</p>
+                        <p className="card-text">{`${this.props.data.platform}`}</p>
                         <button type="button" className="btn btn-primary">Carrito</button>
                     </div>
                 </div>
