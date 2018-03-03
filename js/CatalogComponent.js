@@ -24,12 +24,6 @@ class CatalogComponent extends React.Component  {
     
 
     load() {
-        if(this.state.errorLoad){
-            this.setState({
-                errorLoad:undefined
-            });
-        }
-
         if(this.state.loading){
             this.changes=true;
             return;
@@ -69,6 +63,11 @@ class CatalogComponent extends React.Component  {
     }
 
     updateProducts(){
+        if(this.state.errorLoad){
+            this.setState({
+                errorLoad:undefined
+            });
+        }
         this.unsetLoading();
         this.setState({
             productList:load('productList')
