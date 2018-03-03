@@ -73,7 +73,7 @@ class CatalogComponent extends React.Component  {
         }
     }
 
-    requestError(erroInfo){
+    requestError(errorInfo){
         $('.catalog').parent().removeClass('spinner');
         if(errorInfo){
             this.setState({
