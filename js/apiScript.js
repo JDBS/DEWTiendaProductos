@@ -7,7 +7,7 @@ var apiKeyForex = 'CLgVZ2SmUW1P0EEa2ryKYZf7yeXRUL58';
 
 var pageSize = '10';
 var minPrice = 0;
-maxPrice = 99999;
+var maxPrice = 99999;
 var page = 1;
 var searchEbay = '';
 var searchBesBuy = '';
@@ -81,36 +81,18 @@ function buildURLArray() {
 // End buildURLArray() function
 
 //#region - Api Url
-// Construct the request Replace MyAppID with your Production AppID
-// var url = "http://svcs.ebay.com/services/search/FindingService/v1" +
-//     "?SECURITY-APPNAME=" + apikeyEbay + "&OPERATION-NAME=findItemsByKeywords" +
-//     "&SERVICE-VERSION=1.0.0" + "&RESPONSE-DATA-FORMAT=JSON" +
-//     "&REST-PAYLOAD" + "&keywords=" + searchEbay +
-//     "&paginationInput.entriesPerPage=" + pageSize +
-//     "&paginationInput.pageNumber=" + page +
-//     "&GLOBAL-ID=EBAY-ES" + urlFilter +
-//     `&sortOrder=${sortOrderType[0]}`;
-
-// var urlBB = "https://api.bestbuy.com/v1/products(" +
-//     "(search=" + searchBesBuy + ")" + attributes +
-//     // "&manufacturer=samsung" +
-//     // "&(categoryPath.name=abcat0101000))" +
-//     "?apiKey=" + apikeyBestBuy + "&sort=salePrice.asc" +
-//     "&show=image,salePrice,modelNumber,longDescription,thumbnailImage,shortDescription,name,modelNumber,categoryPath.name,categoryPath.id" +
-//     "&format=json";
 function setUrl() {
     urlList = {
         'BestBuy': {
             'trending': 'https://api.bestbuy.com/beta/products/trendingViewed?apiKey=A0iJvovzx1h8jN9IXhGSCwjm',
-            'category': `https://api.bestbuy.com/v1/products${searchBesBuy}?apiKey=${apikeyBestBuy}&show=image,salePrice,modelNumber,longDescription,thumbnailImage,shortDescription,name,modelNumber,categoryPath.name,categoryPath.id&format=json`,
+            'category': `https://api.bestbuy.com/v1/products(${searchBesBuy}salePrice>${minPrice}&salePrice<${maxPrice})?apiKey=${apikeyBestBuy}&show=image,salePrice,modelNumber,longDescription,thumbnailImage,shortDescription,name,categoryPath.name,categoryPath.id&format=json`,
         },
         'Ebay': {
-            'trending': `http://svcs.ebay.com/services/search/FindingService/v1?SECURITY-APPNAME=${apikeyEbay}&OPERATION-NAME=findItemsByKeywords&SERVICE-VERSION=1.0.0&RESPONSE-DATA-FORMAT=JSON&REST-PAYLOAD&keywords=trending&paginationInput.entriesPerPage=10&paginationInput.pageNumber=1&GLOBAL-ID=EBAY-ES&itemFilter(0).name=HideDuplicateItems&itemFilter(0).value=true&sortOrder=BestMatch`,
-            'category': `http://svcs.ebay.com/services/search/FindingService/v1?SECURITY-APPNAME=${apikeyEbay}&OPERATION-NAME=findItemsByKeywords&SERVICE-VERSION=1.0.0&RESPONSE-DATA-FORMAT=JSON&REST-PAYLOAD&keywords=${searchEbay}&paginationInput.entriesPerPage=${pageSize}&paginationInput.pageNumber=1&GLOBAL-ID=EBAY-ES${urlFilter}&sortOrder=BestMatch`
+            'trending': `https://svcs.ebay.com/services/search/FindingService/v1?SECURITY-APPNAME=${apikeyEbay}&OPERATION-NAME=findItemsByKeywords&SERVICE-VERSION=1.0.0&RESPONSE-DATA-FORMAT=JSON&REST-PAYLOAD&keywords=trending&paginationInput.entriesPerPage=10&paginationInput.pageNumber=1&GLOBAL-ID=EBAY-ES&itemFilter(0).name=HideDuplicateItems&itemFilter(0).value=true&sortOrder=BestMatch`,
+            'category': `https://svcs.ebay.com/services/search/FindingService/v1?SECURITY-APPNAME=${apikeyEbay}&OPERATION-NAME=findItemsByKeywords&SERVICE-VERSION=1.0.0&RESPONSE-DATA-FORMAT=JSON&REST-PAYLOAD&keywords=${searchEbay}&paginationInput.entriesPerPage=${pageSize}&paginationInput.pageNumber=1&GLOBAL-ID=EBAY-ES${urlFilter}&sortOrder=BestMatch`
         }
-    }
+    };
 }
-
 //#endregion
 
 //#region - Api request
@@ -158,12 +140,12 @@ function ajaxRequest(platform, callback, callbackError, data) {
  * @param data - Array of items to search
  */
 function getCurrency(callback, callbackError, data) {
-    productCategory[data.categoria] ? category = productCategory[data.categoria] : category = productCategory.all;
+    productCategory[data.category] ? category = productCategory[data.category] : category = productCategory.all;
     maxPrice = data.maxPrice;
     minPrice = data.minPrice;
-    searchEbay = data.search.split(' ').join('%20') + '%20' + category;
+    // searchEbay = data.search.split(' ').join('%20') + '%20' + category;
     data.search.length !== 0 ? searchEbay = data.search.split(' ').join('%20') + `%20 ${category}` : searchEbay = category;
-    data.search.length !== 0 ? searchBesBuy = '((search=' + data.search.split(' ').join('&search=') + '))' : searchBesBuy = category;
+    data.search.length !== 0 ? searchBesBuy = '(search=' + data.search.split(' ').join('&search=') + ')' : searchBesBuy = `(search=${category})`;
     setUrl();
 
     $.ajax({

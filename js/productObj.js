@@ -68,7 +68,9 @@ function getProducts(data, api, callback) {
 
     count++;
     if (count === 2) {
+        count = 0;
         localStorage.setItem('productList', JSON.stringify(productList));
+        productList = [];
         callback();
     }
 }
