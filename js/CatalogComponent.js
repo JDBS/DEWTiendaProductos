@@ -1,5 +1,6 @@
 const DELAY_BETWEEN_SEARCHS_MS=3000;
 const MAX_PRICE_VALUE=99999;
+const ITEMS_PER_PAGE=10;
 
 class CatalogComponent extends React.Component  {
     constructor(props) {
@@ -7,9 +8,10 @@ class CatalogComponent extends React.Component  {
         this.state={
             productList:[],
             loading:false,
-            errorLoad:undefined
+            errorLoad:undefined,
+            pagesCount:0,
+            page:0
         };
-        
         this.search='';
         this.minPrice=0;
         this.maxPrice=MAX_PRICE_VALUE;
@@ -72,9 +74,11 @@ class CatalogComponent extends React.Component  {
         this.setState({
             productList:load('productList')
         });
+
         if(this.changes){
             this.load();
         }
+        this.updatePages();
     }
 
     requestError(errorInfo){
@@ -150,9 +154,91 @@ class CatalogComponent extends React.Component  {
         this.load();
     }
 
+    updatePagination(){
+
+    }
+
+
+
+    goPage(event){
+        let number = parseInt($(event.target).text())-1;
+        const pagesCount  = this.state.pagesCount;
+        if(number>=0 && number<pagesCount){
+            this.setState({
+                page:number
+            });
+        }
+    }
+
+    previousPage(){
+        const number=this.state.page;
+        if(number>0){
+            this.setState({
+                page:number-1
+            });
+        }
+    }
+
+    nextPage(){
+        const pagesCount  = this.state.pagesCount;
+        const number=this.state.page;
+        if(number<pagesCount){
+            this.setState({
+                page:number+1
+            });
+        }
+    }
+
+    getPagesCount(){
+        const productsCount = this.state.productList.length;
+        let pagesCount = parseInt(productsCount/10);
+        if(productsCount%10>0){
+            pagesCount++;
+        }
+        return pagesCount;
+    }
+    updatePages(){
+        const pagesCount  = this.getPagesCount();
+        this.setState({
+            pagesCount:pagesCount,
+            page:0
+        });
+    }
+
+    getPaginationButtons(){
+        const pagesCount= this.state.pagesCount;
+        
+        if(this.state.pagesCount==0){
+            return;
+        }
+
+        const pages=[];
+        for(let i=1; i<=pagesCount;i++){
+            pages.push(i);
+        }
+        return (
+            <ul className="pagination">
+                <li className="page-item"><a className="page-link" onClick={this.previousPage.bind(this)} href="#">Previous</a></li>
+                {pages.map(
+                    (page)=>{
+                        if(page-1==this.state.page){
+                            return <li key={page} className="page-item active"><a className="page-link" onClick={this.goPage.bind(this)} >{page}</a></li>
+                        }else{
+                            return <li key={page} className="page-item"><a className="page-link"  onClick={this.goPage.bind(this)} >{page}</a></li>
+                        }
+                    }
+
+                )}
+                <li className="page-item"><a className="page-link" href="#">Next</a></li>
+            </ul>
+        )
+    }
 
     getCatalog(){
-        const products = this.state.productList;
+        const page = this.state.page;
+        const startProduct=page*ITEMS_PER_PAGE;
+        const endProduct=startProduct+ITEMS_PER_PAGE;
+        const products = this.state.productList.slice(startProduct,endProduct);
         return(
             <div className="catalog">
                 <div className="row">
@@ -161,6 +247,9 @@ class CatalogComponent extends React.Component  {
                         (product)=><ProductComponent key={`${product.id}${product.name}`} data={product}/>
                     )
                 }
+                </div>
+                <div className="row">
+                    {this.getPaginationButtons()}
                 </div>
             </div>
         );
