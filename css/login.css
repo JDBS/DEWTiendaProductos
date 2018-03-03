@@ -1,3 +1,7 @@
+.logo img{
+    width: 8rem;
+}
+
 #google, #facebook,
 #github, #twitter{
     font-size: 1rem !important;
