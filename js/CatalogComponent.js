@@ -24,6 +24,12 @@ class CatalogComponent extends React.Component  {
     
 
     load() {
+        if(this.state.errorLoad){
+            this.setState({
+                errorLoad:undefined
+            });
+        }
+
         if(this.state.loading){
             this.changes=true;
             return;
@@ -40,7 +46,6 @@ class CatalogComponent extends React.Component  {
             }
             this.changes=false;
         }
-        
         getCurrency(
             this.updateProducts.bind(this),
             this.requestError.bind(this),
@@ -165,11 +170,11 @@ class CatalogComponent extends React.Component  {
     getErrorMessage(errorMessage){
         return(
             <div className="card text-white bg-danger mb-3" style={{margin:'2vw'}}>
-            <div className="card-header">Error {errorMessage}</div>
-            <div className="card-body">
-                <h5 className="card-title">Error de Carga</h5>
-                <p className="card-text">Ha habido un error de carga en la API.</p>
-            </div>
+                <div className="card-header">Error {errorMessage}</div>
+                <div className="card-body">
+                    <h5 className="card-title">Error de Carga</h5>
+                    <p className="card-text">Ha habido un error de carga en la API.</p>
+                </div>
             </div>
         );
     }
@@ -201,7 +206,7 @@ class CatalogComponent extends React.Component  {
                         </div>
                     </div>
                     <div className="col-sm-9 col-md-10">
-                        {this.state.errorLoad && this.getErrorMessage(this.state.errorLoad)}
+                        {this.state.errorLoad && this.getErrorMessage()}
                         {!this.state.errorLoad && this.getCatalog()}
                     </div>
                 </div>
