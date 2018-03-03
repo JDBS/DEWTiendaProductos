@@ -75,11 +75,17 @@ class CatalogComponent extends React.Component  {
 
     requestError(erroInfo){
         $('.catalog').parent().removeClass('spinner');
-        console.log(errorInfo);
-        this.setState({
-            loading:false,
-            errorLoad:errorInfo
-        });
+        if(errorInfo){
+            this.setState({
+                loading:false,
+                errorLoad:errorInfo
+            });
+        }else{
+            this.setState({
+                loading:false
+            });
+        }
+        
         if(this.changes){
             this.load();
         }
