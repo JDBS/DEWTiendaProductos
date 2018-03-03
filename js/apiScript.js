@@ -11,6 +11,7 @@ maxPrice = 99999;
 var page = 1;
 var searchEbay = '';
 var searchBesBuy = '';
+var urlList = '';
 // var sortOrderType = [
 //     'BestMatch', 'BidCountFewest', 'BidCountMost',
 //     'CountryAscending', 'CountryDescending', 'CurrentPriceHighest',
@@ -98,7 +99,7 @@ function buildURLArray() {
 //     "&show=image,salePrice,modelNumber,longDescription,thumbnailImage,shortDescription,name,modelNumber,categoryPath.name,categoryPath.id" +
 //     "&format=json";
 function setUrl() {
-    var urlList = {
+    urlList = {
         'BestBuy': {
             'trending': 'https://api.bestbuy.com/beta/products/trendingViewed?apiKey=A0iJvovzx1h8jN9IXhGSCwjm',
             'category': `https://api.bestbuy.com/v1/products${searchBesBuy}?apiKey=${apikeyBestBuy}&show=image,salePrice,modelNumber,longDescription,thumbnailImage,shortDescription,name,modelNumber,categoryPath.name,categoryPath.id&format=json`,
@@ -164,7 +165,7 @@ function getCurrency(callback, callbackError, data) {
     data.search.length !== 0 ? searchEbay = data.search.split(' ').join('%20') + `%20 ${category}` : searchEbay = category;
     data.search.length !== 0 ? searchBesBuy = '((search=' + data.search.split(' ').join('&search=') + '))' : searchBesBuy = category;
     setUrl();
-    
+
     $.ajax({
         url: `https://forex.1forge.com/1.0.3/quotes?pairs=USDEUR&api_key=${apiKeyForex}`,
         type: 'GET',
