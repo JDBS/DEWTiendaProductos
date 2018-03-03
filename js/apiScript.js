@@ -12,15 +12,15 @@ var page = 1;
 var searchEbay = '';
 var searchBesBuy = '';
 var urlList = '';
+let count = 0;
+let productList = [];
+
 // var sortOrderType = [
 //     'BestMatch', 'BidCountFewest', 'BidCountMost',
 //     'CountryAscending', 'CountryDescending', 'CurrentPriceHighest',
 //     'DistanceNearest', 'EndTimeSoonest', 'PricePlusShippingHighest',
 //     'PricePlusShippingLowest', 'StartTimeNewest', 'WatchCountDecreaseSort'
 // ];
-
-// BestBuy filter
-var attributes = ''; //'&(categoryPath.id=abcat0800000))';
 
 // Create a JavaScript array of the item filters you want to use in your request
 var filterArray = [{
@@ -81,7 +81,8 @@ function buildURLArray() {
 // End buildURLArray() function
 
 //#region - Api Url
-function setUrl() {
+function setUrl(data) {
+    productCategory[data.category] ? category = productCategory[data.category] : category = productCategory.all;
     urlList = {
         'BestBuy': {
             'trending': 'https://api.bestbuy.com/beta/products/trendingViewed?apiKey=A0iJvovzx1h8jN9IXhGSCwjm',
@@ -104,10 +105,11 @@ function setUrl() {
  * @param callbackError - Function to know if have been an error
  */
 function ajaxRequest(platform, callback, callbackError, data) {
+    setUrl(data);
     // Execute the function to build the URL filter
     buildURLArray(filterArray);
     let type;
-    category === 'trending' ? type = category : type = 'category';
+    category === 'trending' && data.search.length === 0 ? type = category : type = 'category';
     if (platform === 'Ebay')
         $.ajax({
             url: urlList[platform][type],
@@ -140,13 +142,10 @@ function ajaxRequest(platform, callback, callbackError, data) {
  * @param data - Array of items to search
  */
 function getCurrency(callback, callbackError, data) {
-    productCategory[data.category] ? category = productCategory[data.category] : category = productCategory.all;
     maxPrice = data.maxPrice;
     minPrice = data.minPrice;
-    // searchEbay = data.search.split(' ').join('%20') + '%20' + category;
-    data.search.length !== 0 ? searchEbay = data.search.split(' ').join('%20') + `%20 ${category}` : searchEbay = category;
+    data.search.length !== 0 ? searchEbay = data.search.split(' ').join('%20') : searchEbay = category;
     data.search.length !== 0 ? searchBesBuy = '(search=' + data.search.split(' ').join('&search=') + ')' : searchBesBuy = `(search=${category})`;
-    setUrl();
 
     $.ajax({
         url: `https://forex.1forge.com/1.0.3/quotes?pairs=USDEUR&api_key=${apiKeyForex}`,
@@ -164,4 +163,73 @@ function getCurrency(callback, callbackError, data) {
         }
     });
 }
+//#endregion
+//#region - Object creation
+/**
+ * @param  {object} data - Array of items to convert
+ * @param  {string} platform - Store name
+ * @param  {object} callback - Function to know when the data is loaded
+ */
+function getProducts(data, platform, callback) {
+    let id, product, items, name, manufacture, img, price, description, typeId, typeName;
+
+    if (platform === 'BestBuy') {
+        let cF = localStorage.getItem('convertFactor');
+        items = data.products;
+        if (items)
+            for (let i = 0; i < items.length; ++i) {
+                id = items[i].modelNumber;
+                name = items[i].name;
+                img = items[i].image;
+                price = (items[i].salePrice * cF).toFixed(2);
+                description = items[i].shortDescription;
+                typeId = items[i].categoryPath[1].id;
+                typeName = items[i].categoryPath[1].name;
+                if (null != name) {
+                    product = new Product(id, name, description, price, typeId, typeName, img, 'BestBuy');
+                }
+                productList.push(product);
+            }
+        else {
+            items = data.results;
+            for (let i = 0; i < items.length; ++i) {
+                id = items[i].sku;
+                name = items[i].names.title;
+                img = items[i].images.standard;
+                price = (items[i].prices.current * cF).toFixed(2);
+                description = items[i].descriptions.short;
+                typeId = 0;
+                typeName = 'Trending';
+                if (null != name) {
+                    product = new Product(id, name, description, price, typeId, typeName, img, 'BestBuy');
+                }
+                productList.push(product);
+            }
+        }
+    } else {
+        items = data.findItemsByKeywordsResponse[0].searchResult[0].item || [];
+        for (let i = 0; i < items.length; ++i) {
+            id = items[i].itemId[0] + '-' + new Date().getTime();
+            name = items[i].title[0];
+            items[i].galleryURL !== undefined ? img = items[i].galleryURL[0] : img = items[i].galleryPlusPictureURL[0];
+            price = items[i].sellingStatus[0].currentPrice[0].__value__;
+            description = items[i].title[0];
+            typeId = items[i].primaryCategory[0].categoryId[0];
+            typeName = items[i].primaryCategory[0].categoryName[0];
+            if (null != name) {
+                product = new Product(id, name, description, price, typeId, typeName, img, 'Ebay');
+            }
+            productList.push(product);
+        }
+    }
+
+    count++;
+    if (count === 2) {
+        count = 0;
+        localStorage.setItem('productList', JSON.stringify(productList));
+        productList = [];
+        callback();
+    }
+}
+
 //#endregion
