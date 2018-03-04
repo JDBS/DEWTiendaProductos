@@ -6,7 +6,7 @@ class ProductComponent extends React.Component {
 
     findInCart(product){
         const cart=this.getCart();
-        return cart.find(
+        return cart.findIndex(
             (element)=>element.id===product.id
         );
     }
@@ -15,7 +15,7 @@ class ProductComponent extends React.Component {
         //CART_SAVE_ID
         const cart=this.getCart();
         let product=this.findInCart(this.props.data);
-        if(!product){
+        if(product === -1){
             //hacer copia
             product={
                 id:this.props.data.id,
@@ -27,7 +27,7 @@ class ProductComponent extends React.Component {
             product.count=1;
             cart.push(product)//añadir
         }else{
-            product.count++;
+            cart[product].count++;
         }
         save(cart,CART_SAVE_ID)
     }
