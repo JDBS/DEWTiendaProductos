@@ -9,6 +9,7 @@ class CartComponent extends React.Component{
     this.updateInterval=undefined;
   }
 
+
   componentDidMount(){
     this.cartUpdate();
     if(!this.updateInterval){
@@ -22,7 +23,7 @@ class CartComponent extends React.Component{
   }
 
   cartUpdate(){
-    const cart=load('cart');
+    const cart=load('cart')||[];
     if(cart){
       this.setState({
         cart:load('cart')
@@ -35,7 +36,7 @@ class CartComponent extends React.Component{
   }
 
   getTotalPrice(){
-    const cart=load('cart');
+    const cart=load('cart')||[];
     let price=0;
     cart.forEach(
       (element)=>{
@@ -46,7 +47,7 @@ class CartComponent extends React.Component{
   }
 
   getProductsCount(){
-    const cart=load('cart');
+    const cart=load('cart')||[];
     if(cart){
       const count=cart.length;
       return count;
@@ -88,9 +89,11 @@ class CartComponent extends React.Component{
                 </button>
               </div>
               <div className="modal-body">
-                {this.state.cart.map(
-                  (product)=><CartProductComponent data={product}/>
-                )}
+                {
+                  this.state.cart && this.state.cart.map(
+                    (product)=><CartProductComponent key={product.id} data={product}/>
+                  )
+                }
               </div>
               <div className="modal-footer">
                 <h5>Precio Total: {this.getTotalPrice()}€ </h5>
