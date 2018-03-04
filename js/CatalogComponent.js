@@ -1,6 +1,6 @@
 const DELAY_BETWEEN_SEARCHS_MS=2000;
 const MAX_PRICE_VALUE=99999;
-const ITEMS_PER_PAGE=10;
+const ITEMS_PER_PAGE=9;
 
 class CatalogComponent extends React.Component  {
     constructor(props) {
