@@ -34,6 +34,17 @@ class CartComponent extends React.Component{
     }
   }
 
+  getTotalPrice(){
+    const cart=load('cart');
+    let price=0;
+    cart.forEach(
+      (element)=>{
+        price+=element.price*element.count
+      }
+    );
+    return price.toFixed(2);
+  }
+
   getProductsCount(){
     const cart=load('cart');
     if(cart){
@@ -44,12 +55,25 @@ class CartComponent extends React.Component{
     }
   }
 
+  isLogged (){
+    return load("userLogged") && true;
+  }
+
+  buy(){
+    if(!this.isLogged()){
+      toastr.error("Debe identificarse para hacer la compra");
+    }else{
+      toastr.success("Ha realizado su compra con éxito");
+      save([],CART_SAVE_ID);
+    }
+  }
+
   render(){
     return(
       <div>
         {/* Button trigger modal */}
         <button type="button" className="btn btn-default" data-toggle="modal" data-target="#exampleModalCenter">
-          <i className="fa fa-shopping-cart"></i>
+          <i className="icon-cart"></i>
           <span id="nav-bar-cart">Carrito ({this.getProductsCount()})</span>
         </button>
         
@@ -69,8 +93,9 @@ class CartComponent extends React.Component{
                 )}
               </div>
               <div className="modal-footer">
+                <h5>Precio Total: {this.getTotalPrice()}€ </h5>
                 <button type="button" className="btn btn-secondary" data-dismiss="modal">Cancelar</button>
-                <button type="button" className="btn btn-primary">Comprar</button>
+                <button type="button" className="btn btn-primary" onClick={this.buy.bind(this)}>Comprar</button>
               </div>
             </div>
           </div>
