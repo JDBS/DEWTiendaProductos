@@ -58,7 +58,7 @@ class LoginButtonComponent extends React.Component{
     render () {
         const logged = this.state.logged;
         return (
-            <div>
+            <div className="d-flex justify-content-end align-items-center">
                 {logged && <span>{`Bienvenido ${this.getUser().substring(0,11)}... `}</span>}
                 {logged && this.loggedComponent()}
                 {!logged && this.unLoggedComponent()}

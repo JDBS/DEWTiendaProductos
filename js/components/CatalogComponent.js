@@ -268,8 +268,6 @@ class CatalogComponent extends React.Component  {
     render(){
         return(
             <div>
-                {/*<Header/>*/}
-                <LoginButtonComponent/>
                 <div className="input-group">    
                     <input type="text" onChange={this.doSearch.bind(this)} className="form-control" name="x" placeholder="Buscar..."/>
                 </div>
@@ -296,7 +294,6 @@ class CatalogComponent extends React.Component  {
                         {!this.state.errorLoad && this.getCatalog()}
                     </div>
                 </div>
-                {/*<Footer/>*/}
             </div>
         );
     }

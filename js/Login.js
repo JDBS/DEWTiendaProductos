@@ -1,4 +1,4 @@
-$(document).ready(() => {
+function loadLogin(){
     $('#google').click(loginGoogle);
     $('#facebook').click(loginFaceBook);
     $('#github').click(loginGitHub);
@@ -53,4 +53,4 @@ $(document).ready(() => {
             console.log(errorCode, errorMessage);
         });
     }
-});
+}

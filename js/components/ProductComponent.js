@@ -5,7 +5,7 @@ class ProductComponent extends React.Component {
         return (
             <div className="col-lg-4 col-md-6 col-sm-12">
                 <div className="card" style={{margin:'4px'}} >
-                    <div className="card-header" style={{height:'210px', overflow:'hidden',display:'flex', justifyContent:'center'}}>
+                    <div className="card-header image-container">
                         <img style={{height:'100%'}} src={this.props.data.image} alt="Card image cap"/>
                     </div>
                     <div className="card-body" style={{height:'210px'}}>
