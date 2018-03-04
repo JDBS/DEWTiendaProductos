@@ -60,6 +60,11 @@ class CartComponent extends React.Component{
     return load("userLogged") && true;
   }
 
+  noProducts(){
+    const cart=load('cart')||[];
+    return cart.length===0;
+  }
+
   buy(){
     if(!this.isLogged()){
       toastr.error("Debe identificarse para hacer la compra");
@@ -98,7 +103,8 @@ class CartComponent extends React.Component{
               <div className="modal-footer">
                 <h5>Precio Total: {this.getTotalPrice()}€ </h5>
                 <button type="button" className="btn btn-secondary" data-dismiss="modal">Cancelar</button>
-                <button type="button" className="btn btn-primary" onClick={this.buy.bind(this)}>Comprar</button>
+                {!this.noProducts() && <button type="button" className="btn btn-primary" onClick={this.buy.bind(this)}>Comprar</button>}
+                {this.noProducts() && <button type="button" disabled="true" className="btn btn-primary btn-outline-secondary" onClick={this.buy.bind(this)}>Comprar</button>}
               </div>
             </div>
           </div>
