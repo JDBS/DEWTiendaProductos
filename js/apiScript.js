@@ -6,8 +6,6 @@ var apikeyBestBuy = '0ZD1P0g0K4sJCdFLz79yKKnG'; //'A0iJvovzx1h8jN9IXhGSCwjm';
 var apiKeyForex = 'CLgVZ2SmUW1P0EEa2ryKYZf7yeXRUL58';
 
 var pageSize = '100';
-// var minPrice = 0;
-// var maxPrice = 99999;
 var page = 1;
 var searchEbay = '';
 var searchBesBuy = '';
@@ -15,6 +13,7 @@ var urlList = '';
 let count = 0;
 let productList = [];
 var filterArray = [];
+let category = '';
 
 let productCategory = {
     'all': 'trending',
@@ -31,12 +30,13 @@ let productCategory = {
         'id': 'pcmcat209400050001'
     },
 };
-let category = '';
 
 // Define global variable for the URL filter
 var urlFilter;
 
-// Generates an indexed URL snippet from the array of item filters
+/**
+ * Generates an indexed URL snippet from the array of item filters
+ */
 function buildURLArray() {
     urlFilter = "";
     for (var i = 0; i < filterArray.length; i++) {
@@ -58,6 +58,10 @@ function buildURLArray() {
 // End buildURLArray() function
 
 //#region - Api Url
+/**
+ * Its function is to prepare and set the parameters to send in the url for the Api
+ * @param  {object} data - Object that contains a series of filters and the text to search
+ */
 function setUrl(data) {
     let maxPrice = data.maxPrice;
     let minPrice = data.minPrice;
@@ -91,7 +95,10 @@ function setUrl(data) {
         "name": "HideDuplicateItems",
         "value": "true"
     }];
-    // Execute the function to build the URL filter
+    /**
+     *  Execute the function to build the URL filter
+     * @param  {object} filterArray
+     */
     buildURLArray(filterArray);
     urlList = {
         'BestBuy': {
@@ -109,10 +116,11 @@ function setUrl(data) {
 //#region - Api request
 /**
  * It makes the requests to get the products
- * @param platform - Store name
- * @param url - url with the parameters
- * @param callback - Function to know when the data is loaded
- * @param callbackError - Function to know if have been an error
+ * @param  {string}  platform - Store name
+ * @param  {string}  url - url with the parameters
+ * @param  {function}  callback - Function to know when the data is loaded
+ * @param  {function}  callbackError - Function to know if have been an error
+ * @param  {object} data - Object that contains a series of filters and the text to search
  */
 function ajaxRequest(platform, callback, callbackError, data) {
     setUrl(data);
@@ -149,8 +157,13 @@ function ajaxRequest(platform, callback, callbackError, data) {
  * @param callback - Function to know when the data is loaded
  * @param data - Array of items to search
  */
+/**
+ * It gets money change factor, then call the stores ajax call
+ * @param  {function} callback - Function to know when the data is loaded
+ * @param  {function} callbackError
+ * @param  {object} data - Object that contains a series of filters and the text to search
+ */
 function getCurrency(callback, callbackError, data) {
-
     $.ajax({
         url: `https://forex.1forge.com/1.0.3/quotes?pairs=USDEUR&api_key=${apiKeyForex}`,
         type: 'GET',
@@ -170,9 +183,9 @@ function getCurrency(callback, callbackError, data) {
 //#endregion
 //#region - Object creation
 /**
- * @param  {object} data - Array of items to convert
+ * @param  {object} data - Object list of items
  * @param  {string} platform - Store name
- * @param  {object} callback - Function to know when the data is loaded
+ * @param  {function} callback - Function to know when the data is loaded
  */
 function getProducts(data, platform, callback) {
     let id, product, items, name, manufacture, img, price, description, typeId, typeName;
