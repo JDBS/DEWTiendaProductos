@@ -132,10 +132,8 @@ class CatalogComponent extends React.Component  {
         if(Number.isNaN(maxPrice)){
             maxPrice=MAX_PRICE_VALUE;
         }else if(maxPrice<=minPrice){
-            maxPrice=minPrice+1;
-            event.target.value=maxPrice;
-
-            this.maxPrice=minPrice+1;
+            maxPrice=MAX_PRICE_VALUE;
+            this.maxPrice=maxPrice;
         }else{
             this.maxPrice=maxPrice;
         }
@@ -180,7 +178,7 @@ class CatalogComponent extends React.Component  {
     }
 
     nextPage(){
-        const pagesCount  = this.state.pagesCount;
+        const pagesCount  = this.state.pagesCount-1;
         const number=this.state.page;
         if(number<pagesCount){
             this.setState({
@@ -218,7 +216,7 @@ class CatalogComponent extends React.Component  {
         }
         return (
             <ul className="pagination mx-auto">
-                <li className="page-item"><a className="page-link" onClick={this.previousPage.bind(this)} href="#">Previous</a></li>
+                <li className="page-item"><a className="page-link" onClick={this.previousPage.bind(this)}>Previous</a></li>
                 {pages.map(
                     (page)=>{
                         if(page-1==this.state.page){
@@ -229,7 +227,7 @@ class CatalogComponent extends React.Component  {
                     }
 
                 )}
-                <li className="page-item"><a className="page-link" href="#">Next</a></li>
+                <li className="page-item"><a className="page-link" onClick={this.nextPage.bind(this)}>Next</a></li>
             </ul>
         )
     }
