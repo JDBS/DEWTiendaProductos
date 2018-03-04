@@ -29,13 +29,13 @@ class HeaderComponent extends React.Component{
                   <a className="dropdown-item" href="#">Inglés</a>
                 </div>
               </li>
-              <li className="nav-item" id="producto">
-                <CartComponent/>
-              </li>
             </ul>
             <ul className="navbar-nav ml-auto">
               <li className="nav-item" id="login">
                 <LoginButtonComponent/>
+              </li>
+              <li className="nav-item" id="producto">
+                <CartComponent/>
               </li>
             </ul>
           </div>
