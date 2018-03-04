@@ -4,6 +4,7 @@ class LoginComponent extends React.Component{
   }
   render(){
     return(
+      
       <div>
         <nav className="navbar navbar-dark bg-dark">
             <div className="logo my-2 ml-3">

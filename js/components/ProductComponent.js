@@ -1,7 +1,38 @@
 class ProductComponent extends React.Component {
+
+    getCart(){
+        return load(CART_SAVE_ID)||[];
+    }
+
+    findInCart(product){
+        const cart=this.getCart();
+        return cart.find(
+            (element)=>element.id===product.id
+        );
+    }
+
+    addToCart(){
+        //CART_SAVE_ID
+        const cart=this.getCart();
+        let product=this.findInCart(this.props.data);
+        if(!product){
+            //hacer copia
+            product={
+                id:this.props.data.id,
+                name:this.props.data.name,
+                image:this.props.data.image,
+                price:this.props.data.price,
+                count:1
+            };
+            product.count=1;
+            cart.push(product)//añadir
+        }else{
+            product.count++;
+        }
+        save(cart,CART_SAVE_ID)
+    }
+
     render(){
-        //Card Columns
-        //https://getbootstrap.com/docs/4.0/components/card/#card-columns
         return (
             <div className="col-lg-4 col-md-6 col-sm-12">
                 <div className="card" style={{margin:'4px'}} >
@@ -15,7 +46,7 @@ class ProductComponent extends React.Component {
                     <div className="card-footer card-footer-flex">
                         <p className="card-text">{`${this.props.data.price}€`}</p>
                         <p className="card-text">{`${this.props.data.platform}`}</p>
-                        <button type="button" className="btn btn-primary">Carrito</button>
+                        <button type="button" className="btn btn-primary" onClick={this.addToCart.bind(this)}>Carrito</button>
                     </div>
                 </div>
             </div>

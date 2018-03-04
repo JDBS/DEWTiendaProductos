@@ -64,11 +64,13 @@ class CartComponent extends React.Component{
                 </button>
               </div>
               <div className="modal-body">
-                ...
+                {this.state.cart.map(
+                  (product)=><CartProductComponent data={product}/>
+                )}
               </div>
               <div className="modal-footer">
-                <button type="button" className="btn btn-secondary" data-dismiss="modal">Close</button>
-                <button type="button" className="btn btn-primary">Save changes</button>
+                <button type="button" className="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                <button type="button" className="btn btn-primary">Comprar</button>
               </div>
             </div>
           </div>
