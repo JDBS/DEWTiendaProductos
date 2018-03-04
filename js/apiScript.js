@@ -5,63 +5,40 @@ var apikeyEbay = 'Aymediac-TiendaDE-PRD-3134e8f72-be150970';
 var apikeyBestBuy = '0ZD1P0g0K4sJCdFLz79yKKnG'; //'A0iJvovzx1h8jN9IXhGSCwjm';
 var apiKeyForex = 'CLgVZ2SmUW1P0EEa2ryKYZf7yeXRUL58';
 
-var pageSize = '10';
-var minPrice = 0;
-var maxPrice = 99999;
+var pageSize = '100';
+// var minPrice = 0;
+// var maxPrice = 99999;
 var page = 1;
 var searchEbay = '';
 var searchBesBuy = '';
 var urlList = '';
 let count = 0;
 let productList = [];
+var filterArray = [];
 
-// var sortOrderType = [
-//     'BestMatch', 'BidCountFewest', 'BidCountMost',
-//     'CountryAscending', 'CountryDescending', 'CurrentPriceHighest',
-//     'DistanceNearest', 'EndTimeSoonest', 'PricePlusShippingHighest',
-//     'PricePlusShippingLowest', 'StartTimeNewest', 'WatchCountDecreaseSort'
-// ];
-
-// Create a JavaScript array of the item filters you want to use in your request
-var filterArray = [{
-    "name": "MinPrice",
-    "value": minPrice,
-    "paramName": "Currency",
-    "paramValue": "EUR"
-}, {
-    "name": "MaxPrice",
-    "value": maxPrice,
-    "paramName": "Currency",
-    "paramValue": "EUR"
-}, {
-    "name": "FreeShippingOnly",
-    "value": "true",
-    "paramName": "",
-    "paramValue": ""
-}, {
-    "name": "ListingType",
-    "value": [
-        "AuctionWithBIN", "FixedPrice", "StoreInventory"
-    ],
-    "paramName": "",
-    "paramValue": ""
-}, {
-    "name": "HideDuplicateItems",
-    "value": "true"
-}];
 let productCategory = {
     'all': 'trending',
-    'tv': 'TV',
-    'health': 'Health',
-    'phone': 'Smartphone',
+    'tv': {
+        'name': 'TV',
+        'id': 'abcat0101000',
+    },
+    'health': {
+        'name': 'Health',
+        'id': 'pcmcat242800050021'
+    },
+    'phone': {
+        'name': 'Smartphone',
+        'id': 'pcmcat209400050001'
+    },
 };
 let category = '';
 
 // Define global variable for the URL filter
-var urlFilter = "";
+var urlFilter;
 
 // Generates an indexed URL snippet from the array of item filters
 function buildURLArray() {
+    urlFilter = "";
     for (var i = 0; i < filterArray.length; i++) {
         var itemFilter = filterArray[i];
         for (var index in itemFilter) {
@@ -82,11 +59,44 @@ function buildURLArray() {
 
 //#region - Api Url
 function setUrl(data) {
+    let maxPrice = data.maxPrice;
+    let minPrice = data.minPrice;
     productCategory[data.category] ? category = productCategory[data.category] : category = productCategory.all;
+    data.search.length !== 0 ? searchEbay = data.search.split(' ').join('%20') : searchEbay = category.name;
+    data.search.length !== 0 ? searchBesBuy = '(search=' + data.search.split(' ').join('&search=') + ')' : searchBesBuy = `(categoryPath.id=${category.id})`;
+    // Create a JavaScript array of the item filters you want to use in your request
+    filterArray = [{
+        "name": "MinPrice",
+        "value": minPrice,
+        "paramName": "Currency",
+        "paramValue": "EUR"
+    }, {
+        "name": "MaxPrice",
+        "value": maxPrice,
+        "paramName": "Currency",
+        "paramValue": "EUR"
+    }, {
+        "name": "FreeShippingOnly",
+        "value": "true",
+        "paramName": "",
+        "paramValue": ""
+    }, {
+        "name": "ListingType",
+        "value": [
+            "AuctionWithBIN", "FixedPrice", "StoreInventory"
+        ],
+        "paramName": "",
+        "paramValue": ""
+    }, {
+        "name": "HideDuplicateItems",
+        "value": "true"
+    }];
+    // Execute the function to build the URL filter
+    buildURLArray(filterArray);
     urlList = {
         'BestBuy': {
             'trending': 'https://api.bestbuy.com/beta/products/trendingViewed?apiKey=A0iJvovzx1h8jN9IXhGSCwjm',
-            'category': `https://api.bestbuy.com/v1/products(${searchBesBuy}salePrice>${minPrice}&salePrice<${maxPrice})?apiKey=${apikeyBestBuy}&show=image,salePrice,modelNumber,longDescription,thumbnailImage,shortDescription,name,categoryPath.name,categoryPath.id&format=json`,
+            'category': `https://api.bestbuy.com/v1/products(${searchBesBuy}&salePrice>${minPrice}&salePrice<${maxPrice})?apiKey=${apikeyBestBuy}&sort=salePrice.asc&show=image,salePrice,modelNumber,longDescription,thumbnailImage,shortDescription,name,categoryPath.name,categoryPath.id&format=json`,
         },
         'Ebay': {
             'trending': `https://svcs.ebay.com/services/search/FindingService/v1?SECURITY-APPNAME=${apikeyEbay}&OPERATION-NAME=findItemsByKeywords&SERVICE-VERSION=1.0.0&RESPONSE-DATA-FORMAT=JSON&REST-PAYLOAD&keywords=trending&paginationInput.entriesPerPage=10&paginationInput.pageNumber=1&GLOBAL-ID=EBAY-ES&itemFilter(0).name=HideDuplicateItems&itemFilter(0).value=true&sortOrder=BestMatch`,
@@ -106,8 +116,6 @@ function setUrl(data) {
  */
 function ajaxRequest(platform, callback, callbackError, data) {
     setUrl(data);
-    // Execute the function to build the URL filter
-    buildURLArray(filterArray);
     let type;
     category === 'trending' && data.search.length === 0 ? type = category : type = 'category';
     if (platform === 'Ebay')
@@ -142,10 +150,6 @@ function ajaxRequest(platform, callback, callbackError, data) {
  * @param data - Array of items to search
  */
 function getCurrency(callback, callbackError, data) {
-    maxPrice = data.maxPrice;
-    minPrice = data.minPrice;
-    data.search.length !== 0 ? searchEbay = data.search.split(' ').join('%20') : searchEbay = category;
-    data.search.length !== 0 ? searchBesBuy = '(search=' + data.search.split(' ').join('&search=') + ')' : searchBesBuy = `(search=${category})`;
 
     $.ajax({
         url: `https://forex.1forge.com/1.0.3/quotes?pairs=USDEUR&api_key=${apiKeyForex}`,
@@ -180,11 +184,14 @@ function getProducts(data, platform, callback) {
             for (let i = 0; i < items.length; ++i) {
                 id = items[i].modelNumber;
                 name = items[i].name;
-                img = items[i].image;
+                if (items[i].image)
+                    img = items[i].image;
+                else
+                    img = items[i].thumbnailImage;
                 price = (items[i].salePrice * cF).toFixed(2);
-                description = items[i].shortDescription;
-                typeId = items[i].categoryPath[1].id;
-                typeName = items[i].categoryPath[1].name;
+                items[i].shortDescription ? description = items[i].shortDescription : description = 'Descripción no disponible';
+                items[i].categoryPath[1] ? typeId = items[i].categoryPath[1].id : typeId = 'id-' + new Date().getTime();
+                items[i].categoryPath[1] ? typeName = items[i].categoryPath[1].name : typeName = null;
                 if (null != name) {
                     product = new Product(id, name, description, price, typeId, typeName, img, 'BestBuy');
                 }
@@ -207,19 +214,24 @@ function getProducts(data, platform, callback) {
             }
         }
     } else {
-        items = data.findItemsByKeywordsResponse[0].searchResult[0].item || [];
-        for (let i = 0; i < items.length; ++i) {
-            id = items[i].itemId[0] + '-' + new Date().getTime();
-            name = items[i].title[0];
-            items[i].galleryURL !== undefined ? img = items[i].galleryURL[0] : img = items[i].galleryPlusPictureURL[0];
-            price = items[i].sellingStatus[0].currentPrice[0].__value__;
-            description = items[i].title[0];
-            typeId = items[i].primaryCategory[0].categoryId[0];
-            typeName = items[i].primaryCategory[0].categoryName[0];
-            if (null != name) {
-                product = new Product(id, name, description, price, typeId, typeName, img, 'Ebay');
+        if (!data.findItemsByKeywordsResponse[0].errorMessage) {
+            items = data.findItemsByKeywordsResponse[0].searchResult[0].item || [];
+            for (let i = 0; i < items.length; ++i) {
+                id = items[i].itemId[0] + '-' + new Date().getTime();
+                name = items[i].title[0];
+                items[i].galleryURL !== undefined ? img = items[i].galleryURL[0] : img = items[i].galleryPlusPictureURL[0];
+                if (items[i].sellingStatus[0].currentPrice[0]["@currencyId"] === 'EUR')
+                    price = items[i].sellingStatus[0].currentPrice[0].__value__;
+                else
+                    price = items[i].sellingStatus[0].convertedCurrentPrice[0].__value__;
+                description = items[i].title[0];
+                typeId = items[i].primaryCategory[0].categoryId[0];
+                typeName = items[i].primaryCategory[0].categoryName[0];
+                if (null != name) {
+                    product = new Product(id, name, description, price, typeId, typeName, img, 'Ebay');
+                }
+                productList.push(product);
             }
-            productList.push(product);
         }
     }
 
