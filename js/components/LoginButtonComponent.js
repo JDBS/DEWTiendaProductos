@@ -40,14 +40,14 @@ class LoginButtonComponent extends React.Component{
     }    
     loggedComponent(){
         return (
-            <div className={"btn btn-secondary btn-md"} onClick={this.unLogEvent.bind(this)}>
+            <div className={"btn btn-secondary icon-login btn-md"} onClick={this.unLogEvent.bind(this)}>
                 logout
             </div>
         );
     }
     unLoggedComponent(){
         return (
-            <div className={"btn btn-secondary btn-md"} onClick={this.logEvent.bind(this)}>
+            <div className={"btn btn-secondary icon-login btn-md"} onClick={this.logEvent.bind(this)}>
                 login
             </div>
         );

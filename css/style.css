@@ -1,3 +1,13 @@
+.icon-cart::before{
+    content: '\0046';
+    margin-right: 5px;
+}
+
+.icon-login::before{
+    content: '\0045';
+    margin-right: 5px;
+}
+
 .custom-card-image {
     display: flex;
     justify-content: center;
